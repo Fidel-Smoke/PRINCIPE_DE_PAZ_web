@@ -13,6 +13,9 @@ export default function Login() {
         } else {
             setMsg('Usuario o contraseña incorrectos');
         }
+        console.log(`Usuario: ${user}, Contraseña: ${pass}`);
+        setUser('');
+        setPass('');
     };
     return (
         <div className="login-container">
