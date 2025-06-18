@@ -16,7 +16,7 @@ export default function NavbarInicio() {
             <div className="container-fluid px-4 d-flex justify-content-between align-items-center">
 
                 <a href="/" className="d-flex align-items-center">
-                    <img src="/principe.png" alt="Logo Colegio" style={{ width: '60px', height: '60px' }} />
+                    <img src="/principe.png" alt="Logo Colegio" style={{ width: '120px', height: '70px' }} />
                 </a>
 
 
