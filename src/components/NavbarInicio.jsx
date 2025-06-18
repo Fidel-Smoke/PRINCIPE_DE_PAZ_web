@@ -7,13 +7,13 @@ export default function NavbarInicio() {
 
     return (
 
-        <div className='navbar navbar-expand-lg navbar-light bg-info sticky-top'>
+        <div className='navbar navbar-expand-lg navbar-light bg-white sticky-top shadow'>
             <div className="container">
                 <a href="/" className="anton"><img src="principe.png" alt="" width="100" height="60" className="hover-effect" /></a>
-                <p className='text-white mt-4'>Es un placer para nosotros que estés aquí</p>
+                <p className='text-dark mt-4'>Es un placer para nosotros que estés aquí</p>
 
-                <div className="dropstart mx-0">
-                    <a className="btn btn-info dropdown hover-effect border border border-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div className="dropstart mx-0 border border-2 border-dark rounded-3">
+                    <a className="btn btn-dark dropdown hover-effect border border border-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i className="bi bi-list text-white  "></i>
                     </a>
                     <ul className="dropdown-menu bg-dark">
