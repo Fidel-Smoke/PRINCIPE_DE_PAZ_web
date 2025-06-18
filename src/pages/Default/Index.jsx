@@ -51,20 +51,23 @@ export default function Index() {
     return (
         <div>
             <NavbarInicio />
-            <div className='container mt-5'>
-                <h1 className=' text-light mt-5 bebas display-1'>COLEGIO PRINCIPE DE <p>
-                    PAZ</p  ></h1>
-                <p className='text-light'>Esta es una aplicación de ejemplo para demostrar el uso de React y React Router.</p>
+            <div className="mt-5 pt-5">
+                <div className='container mt-5'>
+                    <h1 className=' text-light mt-5 bebas display-1'>COLEGIO PRINCIPE DE <p>
+                        PAZ</p  ></h1>
+                    <p className='text-light'>Esta es una aplicación de ejemplo para demostrar el uso de React y React Router.</p>
 
-            </div>
-            <div className='container mt-5 mb-5'>
-                <div>
-                    <h2 className='text-start text-light'>
-                        SI QUIERES UNA MEJOR EDUCACION <p>
-                            NUESTRO COLEGIO ES PARA TI</p>
-                    </h2>
+                </div>
+                <div className='container mt-5 mb-5'>
+                    <div>
+                        <h2 className='text-start text-light'>
+                            SI QUIERES UNA MEJOR EDUCACION <p>
+                                NUESTRO COLEGIO ES PARA TI</p>
+                        </h2>
+                    </div>
                 </div>
             </div>
+            
 
        <p>a</p> 
         <p>a</p>

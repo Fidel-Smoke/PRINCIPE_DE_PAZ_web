@@ -1,32 +1,45 @@
-import React, { useState, useEffect } from 'react';
-
-
-
+import React, { useEffect, useState } from 'react';
 
 export default function NavbarInicio() {
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const onScroll = () => {
+            setScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', onScroll);
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
 
     return (
+        <nav className={`navbar navbar-expand-lg fixed-top ${scrolled ? 'bg-blue shadow-sm' : 'bg-transparent'}`}>
+            <div className="container-fluid px-4 d-flex justify-content-between align-items-center">
 
-        <div className='navbar navbar-expand-lg navbar-light bg-white sticky-top shadow'>
-            <div className="container">
-                <a href="/" className="anton"><img src="principe.png" alt="" width="100" height="60" className="hover-effect" /></a>
-                <p className='text-dark mt-4'>Es un placer para nosotros que estés aquí</p>
+                <a href="/" className="d-flex align-items-center">
+                    <img src="/principe.png" alt="Logo Colegio" style={{ width: '60px', height: '60px' }} />
+                </a>
 
-                <div className="dropstart mx-0 border border-2 border-dark rounded-3">
-                    <a className="btn btn-dark dropdown hover-effect border border border-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i className="bi bi-list text-white  "></i>
-                    </a>
-                    <ul className="dropdown-menu bg-dark">
-                        <li><a className="dropdown-item text-white" href="#">Action</a></li>
-                        <li><a className="dropdown-item text-white" href="#">Another action</a>
-                            <hr className='text-white' />
-                        </li>
-                        <li>
-                            <a className="dropdown-item text-white" href="../Login">Iniciar Sesion</a></li>
+
+
+                <div className="dropdown">
+                    <button
+                        className="btn btn-outline-light border-0"
+                        type="button"
+                        id="menuDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        <i className="bi bi-list fs-3"></i>
+                    </button>
+                    <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="menuDropdown">
+                        <li><a className="dropdown-item" href="#">Inicio</a></li>
+                        <li><a className="dropdown-item" href="#">Nosotros</a></li>
+                        <li><hr className="dropdown-divider" /></li>
+                        <li><a className="dropdown-item" href="/Login">Iniciar Sesión</a></li>
                     </ul>
                 </div>
-            </div>
-        </div>
 
+            </div>
+        </nav>
     );
 }

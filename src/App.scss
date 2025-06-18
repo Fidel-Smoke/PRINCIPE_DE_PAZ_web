@@ -13,6 +13,21 @@ body {
   padding: 0;
 }
 
+/* NavbarInicio.css */
+.bg-blue {
+  background-color: #003366 !important;
+  transition: background-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+}
+
+.bg-transparent {
+  background-color: transparent !important;
+  transition: background-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+}
+
+.navbar {
+  height: 70px;
+  z-index: 1000;
+}
 
 //EFECTO PARA LA IMAGEN DEL LOGO Y CARTAS
 .hover-effect {
@@ -262,9 +277,12 @@ body {
 }
 
 @keyframes rebote-infinito {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateX(0);
   }
+
   50% {
     transform: translateX(10px);
   }
