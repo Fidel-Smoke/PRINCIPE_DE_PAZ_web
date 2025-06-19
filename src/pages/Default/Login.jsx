@@ -37,6 +37,7 @@ export default function Login() {
                 />
                 <button type="submit">Entrar</button>
                 {msg && <p>{msg}</p>}
+                <a href="/registro" className='text-decoration-none text-center'>Registrarme</a>
             </form>
         </div>
     );
