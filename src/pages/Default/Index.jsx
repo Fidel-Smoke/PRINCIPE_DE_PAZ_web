@@ -67,16 +67,24 @@ export default function Index() {
                     </div>
                 </div>
             </div>
-            
+
 
             <p>a</p>
 
 
             <div className="bg-white">
                 <div className="row justify-content-center align-items-center mt-5 mx-1">
-                    <div className="col-md-6 p-5">
-                        <h1 className='bg-warning text-white bebas'>Nosotros Como Institución</h1>
-                        <p>
+                    <div className="col-md-6 p-5 mt-3">
+                        <h1 className=' bebas rounded-4 shadow p-3 text-center '
+                            style={{
+                                background: 'linear-gradient(10deg,rgb(255, 230, 1),rgb(255, 187, 0))',
+                                border: 'none',
+                                borderRadius: '8px',
+                                color: 'white',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                                transition: 'all 0.3s ease',
+                            }}>Nosotros Como Institución</h1>
+                        <p className='mt-4 mx-2'>
                             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Atque inventore molestiae repudiandae! Culpa molestiae quis, omnis ad autem nemo tempore vero, accusantium eveniet dignissimos voluptas, quo ab facere in cupiditate.
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus debitis, molestias maxime repudiandae aut vel corporis itaque atque nobis beatae aperiam laborum voluptate cum nemo optio quibusdam expedita. Exercitationem, consequuntur!Lorem
                         </p>
@@ -85,13 +93,21 @@ export default function Index() {
                         <img
                             src="../colegio.jpg"
                             alt="Colegio"
-                            className="img-fluid mi-tarjeta shadow mt-4"
+                            className="img-fluid mi-tarjeta shadow mt-3"
                             style={{ maxWidth: "55%", height: "auto" }}
                         />
                     </div>
                 </div>
                 <div className='container mt-5 pt-5 text-center'>
-                    <h1 className='text-white bg-warning fw-bold mb-4 bebas display-5'>Nuestras Ofertas Académicas</h1>
+                    <h1 className='fw-bold mb-4 bebas display-5 rounded-4 p-3 mt-1 shadow' style={{
+                        background: 'linear-gradient(80deg,rgb(0, 26, 173),rgb(0, 132, 255))',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: 'white',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                        transition: 'all 0.3s ease',
+                    }}
+                    >Nuestras Ofertas Académicas</h1>
                     <p>Para nosotros es un gusto que seas parte de nuestra comunidad, postulate ahora y conoce nuestras ofertas académicas</p>
                     <div className='container'>
                         <div className='row g-4 mt-3'>
@@ -119,24 +135,34 @@ export default function Index() {
                                 niveles.map((nivel, i) => (
                                     <div className='col-md-4 mb-5' key={i}>
                                         <div className='card-container hover-effect' onClick={() => toggleFlip(i)} style={{ height: "260px", cursor: "pointer" }}>
-                                            <div className={`card-inner ${flipped[i] ? 'flipped' : ''} shadow`}>
-                                                <div className='card-front d-flex flex-column justify-content-center align-items-center p-3 bg-white'>
+                                            <div className={`card-inner ${flipped[i] ? 'flipped' : ''} shadow rounded-4`}>
+                                                <div className='card-front d-flex flex-column justify-content-center align-items-center p-3 bg-white text-dark rounded-4 bg-dark'>
                                                     <img
                                                         src={nivel.imagen}
-                                                        alt={nivel.titulo}
                                                         style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", marginBottom: "10px" }}
+                                                        className='img-fluid mb-3 shadow rounded-circle'
                                                     />
+
                                                     <h5 className='card-title text-primary'>{nivel.titulo}</h5>
                                                     <p className='card-text text-center'>{nivel.frente}</p>
                                                 </div>
 
-                                                <div className='card-back d-flex flex-column justify-content-center align-items-center text-dark text-center px-3'>
+                                                <div className='card-back d-flex flex-column justify-content-center align-items-center text-dark text-center px-3 rounded-4'>
                                                     <h5>{nivel.titulo}</h5>
                                                     <p>{nivel.reverso}</p>
-                                                    <a className="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                        Postularme
+                                                    <a className="btn btn-primary mt-2 col-sm-6 shadow" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                        style={{
+                                                            background: 'linear-gradient(80deg,rgb(0, 26, 173),rgb(0, 132, 255))',
+                                                            border: 'none',
+                                                            borderRadius: '8px',
+                                                            color: 'white',
+                                                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                                                            transition: 'all 0.3s ease',
+                                                        }}>
+                                                        POSTULARME
                                                     </a>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -146,7 +172,14 @@ export default function Index() {
 
                         {!loading && (
                             <div className="">
-                                <h5 className="text-white bg-warning mb-3 fw-bold bebas fs-1">Grados Impartidos</h5>
+                                <h5 className="rounded-4 shadow mb-3 fw-bold bebas fs-1 p-2 " style={{
+                                    background: 'linear-gradient(80deg,rgb(0, 26, 173),rgb(0, 132, 255))',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    color: 'white',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                                    transition: 'all 0.3s ease',
+                                }}>Grados Impartidos</h5>
                                 <div className="d-flex flex-wrap justify-content-center gap-2">
                                     {[
                                         'PRIMERO', 'SEGUNDO', 'TERCERO', 'CUARTO', 'QUINTO',
@@ -176,7 +209,7 @@ export default function Index() {
                                     <button
                                         className="btn btn-gradient-primary px-4 py-2 fs-5 fw-semibold"
                                         style={{
-                                            background: 'linear-gradient(45deg, #0d6efd, #66b2ff)',
+                                            background: 'linear-gradient(80deg,rgb(0, 26, 173),rgb(0, 132, 255))',
                                             border: 'none',
                                             borderRadius: '8px',
                                             color: 'white',
@@ -215,7 +248,7 @@ export default function Index() {
                                     <div className="modal-body px-4">
                                         <p className='text-muted'>Al postularte recibiras una llamada para recibir toda la información necesaria</p>
                                         <div className="mb-3 d-flex align-items-center">
-                                            
+
                                             <label htmlFor="input-nombre" className="col-4 col-form-label fw-semibold text-end pe-3">Nombre:</label>
                                             <div className="col-8">
                                                 <input
