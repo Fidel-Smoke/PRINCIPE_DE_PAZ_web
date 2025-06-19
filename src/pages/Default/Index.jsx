@@ -3,7 +3,6 @@ import NavbarInicio from '../../components/NavbarInicio'
 import { useState, useEffect } from 'react';
 import Calendar from '../../components/Calendar';
 import { BookOpenText, LampDesk, Goal } from 'lucide-react';
-import AIChat from '../../components/AIChat';
 
 
 export default function Index() {
@@ -388,11 +387,6 @@ export default function Index() {
                         </div>
                     </div>
                 </div>
-
-                <div className="div">
-                    <AIChat />
-                </div>
-
 
             </div>
 
