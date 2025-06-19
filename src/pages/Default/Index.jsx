@@ -2,7 +2,7 @@ import React from 'react'
 import NavbarInicio from '../../components/NavbarInicio'
 import { useState, useEffect } from 'react';
 import Calendar from '../../components/Calendar';
-import { MdGradient } from 'react-icons/md';
+import { BookOpenText, LampDesk, Goal } from 'lucide-react';
 
 
 export default function Index() {
@@ -22,19 +22,19 @@ export default function Index() {
                     titulo: "BASICA PRIMARIA",
                     frente: "Formación integral con juegos y valores.",
                     reverso: "Desarrollo emocional, lenguaje y motricidad.",
-                    imagen: "./niños2.jpg"
+                    imagen: <IconCircle><BookOpenText /></IconCircle>
                 },
                 {
                     titulo: "BASICA SECUNDARIA",
                     frente: "Lectoescritura, matemáticas y ciencia.",
                     reverso: "Consolidación académica y desarrollo del pensamiento.",
-                    imagen: "./pri.jpg"
+                    imagen: <IconCircle2 color="#fff"><Goal /></IconCircle2>
                 },
                 {
                     titulo: "MEDIA",
                     frente: "Desarrollo crítico, liderazgo y vocación.",
                     reverso: "Preparación para pruebas Saber y orientación profesional.",
-                    imagen: "./principe.png"
+                    imagen: <IconCircle><LampDesk /></IconCircle>
                 }
             ]);
             setLoading(false);
@@ -48,6 +48,33 @@ export default function Index() {
             return updated;
         });
     };
+
+    const IconCircle = ({ children, color = "#1976D2" }) => (
+        <div style={{
+            backgroundColor: "#FFB300",
+            width: "80px",
+            height: "80px",
+            borderRadius: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+        }}>
+            {React.cloneElement(children, { color, size: 32 })}
+        </div>
+    );
+    const IconCircle2 = ({ children, color = "#1976D2" }) => (
+        <div style={{
+            background: 'linear-gradient(80deg,rgb(0, 26, 173),rgb(0, 132, 255))',
+            width: "80px",
+            height: "80px",
+            borderRadius: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+        }}>
+            {React.cloneElement(children, { color, size: 32 })}
+        </div>
+    );
     return (
         <div>
             <NavbarInicio />
@@ -77,13 +104,13 @@ export default function Index() {
                     <div className="col-md-6 p-5 mt-3">
                         <h1 className=' bebas rounded-4 shadow p-3 text-center '
                             style={{
-                                    background: 'linear-gradient(80deg,rgb(0, 26, 173),rgb(0, 132, 255))',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    color: 'white',
-                                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                                    transition: 'all 0.3s ease',
-                                }}>Nosotros Como Institución</h1>
+                                background: 'linear-gradient(80deg,rgb(0, 26, 173),rgb(0, 132, 255))',
+                                border: 'none',
+                                borderRadius: '8px',
+                                color: 'white',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                                transition: 'all 0.3s ease',
+                            }}>Nosotros Como Institución</h1>
                         <p className='mt-4 mx-2'>
                             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Atque inventore molestiae repudiandae! Culpa molestiae quis, omnis ad autem nemo tempore vero, accusantium eveniet dignissimos voluptas, quo ab facere in cupiditate.
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus debitis, molestias maxime repudiandae aut vel corporis itaque atque nobis beatae aperiam laborum voluptate cum nemo optio quibusdam expedita. Exercitationem, consequuntur!Lorem
@@ -137,12 +164,9 @@ export default function Index() {
                                         <div className='card-container hover-effect' onClick={() => toggleFlip(i)} style={{ height: "260px", cursor: "pointer" }}>
                                             <div className={`card-inner ${flipped[i] ? 'flipped' : ''} shadow rounded-4`}>
                                                 <div className='card-front d-flex flex-column justify-content-center align-items-center p-3 bg-white text-dark rounded-4 bg-dark'>
-                                                    <img
-                                                        src={nivel.imagen}
-                                                        style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", marginBottom: "10px" }}
-                                                        className='img-fluid mb-3 shadow rounded-circle'
-                                                    />
-
+                                                    <div style={{ display: "flex", gap: "24px", justifyContent: "center", padding: "20px" }}>
+                                                        {nivel.imagen}
+                                                    </div>
                                                     <h5 className='card-title text-primary'>{nivel.titulo}</h5>
                                                     <p className='card-text text-center'>{nivel.frente}</p>
                                                 </div>
