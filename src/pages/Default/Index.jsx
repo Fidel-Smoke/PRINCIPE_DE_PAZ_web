@@ -55,7 +55,7 @@ export default function Index() {
                 <div className='container mt-5'>
                     <h1 className=' text-light mt-5 bebas display-1'>COLEGIO PRINCIPE DE <p>
                         PAZ</p  ></h1>
-                    <p className='text-light'>Esta es una aplicación de ejemplo para demostrar el uso de React y React Router.</p>
+                    <h3 className='text-light fw-bold bebas'>La educación es la base de la paz, por eso la educación es nuestro compromiso.</h3>
 
                 </div>
                 <div className='container mt-5 mb-5'>
@@ -69,8 +69,8 @@ export default function Index() {
             </div>
             
 
-       <p>a</p> 
-        <p>a</p>
+            <p>a</p>
+
 
             <div className="bg-white">
                 <div className="row justify-content-center align-items-center mt-5 mx-1">
@@ -85,7 +85,7 @@ export default function Index() {
                         <img
                             src="../colegio.jpg"
                             alt="Colegio"
-                            className="img-fluid mi-tarjeta shadow"
+                            className="img-fluid mi-tarjeta shadow mt-4"
                             style={{ maxWidth: "55%", height: "auto" }}
                         />
                     </div>

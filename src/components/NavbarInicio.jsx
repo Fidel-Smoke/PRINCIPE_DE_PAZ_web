@@ -12,7 +12,7 @@ export default function NavbarInicio() {
     }, []);
 
     return (
-        <nav className={`navbar navbar-expand-lg fixed-top ${scrolled ? 'bg-blue shadow-sm' : 'bg-transparent'}`}>
+        <nav className={`navbar navbar-expand-lg fixed-top ${scrolled ? 'bg-white shadow' : 'bg-transparent'}`}>
             <div className="container-fluid px-4 d-flex justify-content-between align-items-center">
 
                 <a href="/" className="d-flex align-items-center">
@@ -23,7 +23,7 @@ export default function NavbarInicio() {
 
                 <div className="dropdown">
                     <button
-                        className="btn btn-outline-light border-0"
+                        className={`btn border-0 ${scrolled ? 'btn-outline-dark' : 'btn-outline-light'}`}
                         type="button"
                         id="menuDropdown"
                         data-bs-toggle="dropdown"
@@ -31,6 +31,7 @@ export default function NavbarInicio() {
                     >
                         <i className="bi bi-list fs-3"></i>
                     </button>
+
                     <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="menuDropdown">
                         <li><a className="dropdown-item" href="#">Inicio</a></li>
                         <li><a className="dropdown-item" href="#">Nosotros</a></li>
