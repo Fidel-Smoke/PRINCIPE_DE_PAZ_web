@@ -77,13 +77,13 @@ export default function Index() {
                     <div className="col-md-6 p-5 mt-3">
                         <h1 className=' bebas rounded-4 shadow p-3 text-center '
                             style={{
-                                background: 'linear-gradient(10deg,rgb(255, 230, 1),rgb(255, 187, 0))',
-                                border: 'none',
-                                borderRadius: '8px',
-                                color: 'white',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                                transition: 'all 0.3s ease',
-                            }}>Nosotros Como Institución</h1>
+                                    background: 'linear-gradient(80deg,rgb(0, 26, 173),rgb(0, 132, 255))',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    color: 'white',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                                    transition: 'all 0.3s ease',
+                                }}>Nosotros Como Institución</h1>
                         <p className='mt-4 mx-2'>
                             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Atque inventore molestiae repudiandae! Culpa molestiae quis, omnis ad autem nemo tempore vero, accusantium eveniet dignissimos voluptas, quo ab facere in cupiditate.
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus debitis, molestias maxime repudiandae aut vel corporis itaque atque nobis beatae aperiam laborum voluptate cum nemo optio quibusdam expedita. Exercitationem, consequuntur!Lorem
