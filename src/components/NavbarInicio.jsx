@@ -32,11 +32,11 @@ export default function NavbarInicio() {
                         <i className="bi bi-list fs-3"></i>
                     </button>
 
-                    <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="menuDropdown">
-                        <li><a className="dropdown-item" href="#">Inicio</a></li>
-                        <li><a className="dropdown-item" href="#">Nosotros</a></li>
+                    <ul className="dropdown-menu dropdown-menu-end " aria-labelledby="menuDropdown">
+                        <li className='hover-link'><a className="dropdown-item" href="#">Inicio</a></li>
+                        <li className='hover-link'><a className="dropdown-item" href="#">Nosotros</a></li>
                         <li><hr className="dropdown-divider" /></li>
-                        <li><a className="dropdown-item" href="/Login">Iniciar Sesión</a></li>
+                        <li className='hover-link'><a className="dropdown-item" href="/Login">Iniciar Sesión</a></li>
                     </ul>
                 </div>
 
