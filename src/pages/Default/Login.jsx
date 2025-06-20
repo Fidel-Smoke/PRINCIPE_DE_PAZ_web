@@ -85,7 +85,7 @@ export default function Login() {
                     {isPasswordVisible ? " 🙉" : "🙈"}
                 </button>
                 <button type="submit">Entrar</button>
-                <a href="/registro" className='text-decoration-none text-center'>Registrarme</a>
+                <a href="/registro" className='text-decoration-none text-center hover-register'>Registrarme</a>
             </form>
         </div>
     );

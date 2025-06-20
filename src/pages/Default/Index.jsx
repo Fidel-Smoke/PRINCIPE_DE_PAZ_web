@@ -80,26 +80,28 @@ export default function Index() {
             <NavbarInicio />
             <div className="mt-5 pt-5">
                 <div className='container mt-5'>
-                    <h1 className=' text-light mt-5 bebas display-1'>COLEGIO PRINCIPE DE <p>
+                    <h1 className=' text-light mt-5 bebas display-1 fw-bold'>COLEGIO PRINCIPE DE <p>
                         PAZ</p  ></h1>
-                    <h3 className='text-light fw-bold bebas'>La educación es la base de la paz, por eso la educación es nuestro compromiso.</h3>
+                    <h3 className='text-white bebas mt-5'>La educación es la base de la paz, por eso la educación es nuestro compromiso.</h3>
 
                 </div>
                 <div className='container mt-5 mb-5'>
-                    <div>
-                        <h2 className='text-start text-light'>
-                            SI QUIERES UNA MEJOR EDUCACION <p>
-                                NUESTRO COLEGIO ES PARA TI</p>
-                        </h2>
+                    <div className='text-light'>
+                        SI QUIERES UNA MEJOR EDUCACION
+                        NUESTRO COLEGIO ES PARA TI
                     </div>
                 </div>
             </div>
 
 
-            <p>a</p>
+            <p className='mt-5'>
+                <p>a</p>
+                <p>a</p>
+                <p>a</p>
+            </p>
 
 
-            <div className="bg-white">
+            <div className="bg-white rounded-top-4 shadow">
                 <div className="row justify-content-center align-items-center mt-5 mx-1">
                     <div className="col-md-6 p-5 mt-3">
                         <h1 className=' bebas rounded-4 shadow p-3 text-center '
@@ -167,14 +169,14 @@ export default function Index() {
                                                     <div style={{ display: "flex", gap: "24px", justifyContent: "center", padding: "20px" }}>
                                                         {nivel.imagen}
                                                     </div>
-                                                    <h5 className='card-title text-primary'>{nivel.titulo}</h5>
+                                                    <h5 className='card-title text-primary hover-link'>{nivel.titulo}</h5>
                                                     <p className='card-text text-center'>{nivel.frente}</p>
                                                 </div>
 
                                                 <div className='card-back d-flex flex-column justify-content-center align-items-center text-dark text-center px-3 rounded-4'>
                                                     <h5>{nivel.titulo}</h5>
                                                     <p>{nivel.reverso}</p>
-                                                    <a className="btn btn-primary mt-2 col-sm-6 shadow" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                    <a className="btn btn-primary mt-2 col-sm-6 shadow hover-effect" data-bs-toggle="modal" data-bs-target="#exampleModal"
                                                         style={{
                                                             background: 'linear-gradient(80deg,rgb(0, 26, 173),rgb(0, 132, 255))',
                                                             border: 'none',
@@ -475,7 +477,7 @@ export default function Index() {
                                 © {new Date().getFullYear()} Colegio Príncipe de Paz. Todos los derechos reservados.
                             </div>
                             <div className="col-md-4 text-end text-muted small">
-                                Diseñado y desarrollado por <a href="#" className="text-decoration-none text-primary">Anonimo</a>
+                                Diseñado y desarrollado por <a href="#" className="text-decoration-none text-primary hover-link">Anonimo</a>
                             </div>
                         </div>
                     </div>

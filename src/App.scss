@@ -12,6 +12,7 @@ body {
   margin: 100;
   padding: 0;
 }
+
 body::before {
   content: '';
   position: fixed;
@@ -38,6 +39,7 @@ body::before {
   height: 70px;
   z-index: 1000;
 }
+
 //FIN NAVBARINICIO
 
 //EFECTO PARA LA IMAGEN DEL LOGO Y CARTAS
@@ -48,6 +50,7 @@ body::before {
 .hover-effect:hover {
   transform: scale(1.05);
 }
+
 //FIN EFECTO PARA LA IMAGEN DEL LOGO y CARTAS
 
 
@@ -281,6 +284,8 @@ body::before {
 
 //FIN ESTILOS PARA EL EFECTO DE VOLTEO DE TARJETAS
 
+
+// ESTILOS PARA LA FLECHA DE REBOTE
 .flecha-rebote {
   display: inline-block;
   animation: rebote-infinito 1.2s ease-in-out infinite;
@@ -297,3 +302,80 @@ body::before {
     transform: translateX(10px);
   }
 }
+
+//FIN ESTILOS PARA LA FLECHA DE REBOTE
+
+
+//HOVER TEXTO
+.hover-text {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.hover-text::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #ffffff;
+  transition: width 0.9s ease;
+}
+
+.hover-text:hover::before {
+  width: 100%;
+}
+
+
+
+
+.hover-register {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.hover-register::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 10;
+  width: 0;
+  height: 2px;
+  background-color: #7ea5f8;
+  transition: width 0.6s ease;
+}
+
+.hover-register:hover::before {
+  width: 39%;
+}
+
+
+
+
+.hover-link {
+  position: relative;
+  display: inline-block;
+  color: #000;
+  cursor: pointer;
+}
+
+.hover-link::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  /* corregido */
+  width: 0;
+  height: 2px;
+  background-color: #000;
+  transition: width 0.6s ease;
+}
+
+.hover-link:hover::before {
+  width: 100%;
+}
+
+//FIN HOVER TEXTO
