@@ -169,7 +169,7 @@ export default function Index() {
                                                     <div style={{ display: "flex", gap: "24px", justifyContent: "center", padding: "20px" }}>
                                                         {nivel.imagen}
                                                     </div>
-                                                    <h5 className='card-title text-primary hover-link'>{nivel.titulo}</h5>
+                                                    <h5 className='card-title text-primary'>{nivel.titulo}</h5>
                                                     <p className='card-text text-center'>{nivel.frente}</p>
                                                 </div>
 
