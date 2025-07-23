@@ -18,6 +18,10 @@ export default function Crud() {
     es_docente: false
   });
 
+  const CARNET = 21000;
+  const AGENDA = 42000;
+  const SEGURO = 31000;
+
   const COSTOS_2025 = {
     "TR": { matricula: 397000, pension: 268000 },
     "1": { matricula: 397000, pension: 290000 },
@@ -34,8 +38,8 @@ export default function Crud() {
   };
 
   const mesesDelAno = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo',
-    'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'
+    'Febrero', 'Marzo', 'Abril', 'Mayo',
+    'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'
   ];
 
   const cargarEstudiantes = async () => {
@@ -59,11 +63,19 @@ export default function Crud() {
     const grado = cursoRaw.replace(/\D/g, '') || 'TR';
     const costosBase = COSTOS_2025[grado] || { matricula: 0, pension: 0 };
     const pensionFinal = form.es_docente ? Math.floor(costosBase.pension / 2) : costosBase.pension;
+    const totalPagado = costosBase.matricula + pensionFinal * form.meses_pagados.length + CARNET + AGENDA + SEGURO;
+    const valorEsperado = costosBase.matricula + pensionFinal * 10 + CARNET + AGENDA + SEGURO;
 
     const data = {
       ...form,
       valor_matricula: costosBase.matricula,
       valor_pension: pensionFinal,
+      valor_carne: CARNET,
+      valor_agenda: AGENDA,
+      valor_seguro: SEGURO,
+      total_pagado: totalPagado,
+      valor_esperado: valorEsperado,
+      deuda: valorEsperado - totalPagado,
       meses_pagados: JSON.stringify(form.meses_pagados)
     };
 
@@ -126,8 +138,8 @@ export default function Crud() {
     });
 
   return (
-    <div className="container py-4">
-      <h2 className="text-center text-white fw-bold mb-4 fs-1">📘 Gestión de Estudiantes - Colegio Príncipe de Paz</h2>
+    <div className="container py-4 ">
+      <h2 className="text-center text-white fw-bold mb-4 fs-1">📘 Gestión De Estudiantes - Colegio Príncipe de Paz</h2>
 
       <form onSubmit={handleSubmit} className="card p-4 shadow-sm mb-5">
         <div className="row g-3">
@@ -150,7 +162,7 @@ export default function Crud() {
           <div className="col-md-6">
             <div className="form-check">
               <input className="form-check-input" type="checkbox" name="es_docente" id="es_docente" checked={form.es_docente} onChange={handleChange} />
-              <label className="form-check-label " htmlFor="es_docente" style={{ cursor: 'pointer' }}>👨‍🏫Marque Aqui Si El acudiente es docente</label>
+              <label className="form-check-label " htmlFor="es_docente" style={{ cursor: 'pointer' }}>👨‍🏫Marque Aqui Si El Acudiente Es Docente</label>
             </div>
           </div>
 
@@ -189,67 +201,116 @@ export default function Crud() {
         </div>
       </form>
 
-      <div className="mb-4 text-center mt-5 pt-5">
-        <h1 className="fw-bold text-white mb-3">ESTUDIANTES REGISTRADOS</h1>
+      <div className="container py-3">
+        <h2 className="text-center text-white fw-bold mb-4 fs-2">🎓 Estudiantes Registrados</h2>
+
         <input
           type="text"
-          className="form-control w-75 mx-auto"
-          placeholder="🔍 Buscar por estudiante, documento, acudiente o curso..."
+          className="form-control mb-4"
+          placeholder="🔍 Buscar por nombre, documento, curso..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
-      </div>
 
-      <div className="table-responsive">
-        <table className="table table-striped text-center">
-          <thead className="table-primary">
-            <tr>
-              <th>Nombre</th><
-                th>Curso</th>
-              <th>DocE</th>
-              <th>Acudiente</th>
-              <th>DocA</th>
-              <th>Matrícula</th>
-              <th>Pensión</th>
-              <th>Meses Pagados</th>
-              <th>Total</th>
-              <th>Deuda</th>
-              <th>Ref</th>
-              <th>Obs</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {estudiantesFiltrados.map(est => {
-              const meses = JSON.parse(est.meses_pagados || '[]');
-              const total = parseInt(est.valor_matricula) + parseInt(est.valor_pension) * meses.length;
-              const deuda = parseInt(est.valor_matricula) + parseInt(est.valor_pension) * 10 - total;
-              return (
-                <tr key={est.id}>
-                  <td>{est.nombre_estudiante} {est.es_docente === 1 && <span className="badge bg-info">👨‍🏫</span>}</td>
-                  <td>{est.curso}</td>
-                  <td>{est.documento_estudiante}</td>
-                  <td>{est.nombre_acudiente}</td>
-                  <td>{est.documento_acudiente}</td>
-                  <td>${est.valor_matricula}</td>
-                  <td>${est.valor_pension}</td>
-                  <td>{meses.join(', ')}</td>
-                  <td className="text-success fw-bold">${total}</td>
-                  <td className={deuda > 0 ? 'text-danger fw-bold' : 'text-success fw-bold'}>${deuda}</td>
-                  <td>{est.referencia_pago}</td>
-                  <td>{est.observaciones || '-'}</td>
-                  <td>
-                    <button className="btn btn-sm btn-warning me-1" onClick={() => editar(est)}>✏️</button>
-                    <button className="btn btn-sm btn-danger" onClick={() => eliminar(est.id)}>🗑️</button>
-                  </td>
-                </tr>
-              );
-            })}
-            {estudiantesFiltrados.length === 0 && (
-              <tr><td colSpan="13" className="text-center">No hay estudiantes registrados.</td></tr>
-            )}
-          </tbody>
-        </table>
+        {estudiantesFiltrados.map(est => {
+          let meses = [];
+          try {
+            meses = JSON.parse(est.meses_pagados || '[]');
+          } catch { }
+          meses = meses.filter(m => typeof m === 'string' && m.trim() !== '');
+
+          const total = parseInt(est.valor_matricula || 0) +
+            parseInt(est.valor_pension || 0) * meses.length +
+            parseInt(est.valor_carne || 0) +
+            parseInt(est.valor_agenda || 0) +
+            parseInt(est.valor_seguro || 0);
+
+          const deuda = parseInt(est.valor_esperado || 0) - total;
+
+          const pagoMatricula = parseInt(est.valor_matricula || 0) > 0;
+          const pagoPensiones = meses.length > 0;
+
+          // Calcular meses faltantes por pagar
+          const mesesPagadosSet = new Set(meses);
+          const mesesFaltantes = mesesDelAno.filter(m => !mesesPagadosSet.has(m));
+          const todosFaltan = meses.length === 0;
+          const ningunoFalta = mesesFaltantes.length === 0;
+
+          return (
+            <div key={est.id} className={`card shadow-sm mb-4 border-${deuda > 0 ? 'danger' : 'success'}`}>
+              <div className="card-body">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2">
+                  <div>
+                    <h5 className="card-title fw-bold mb-1">
+                      Estudiante: {est.nombre_estudiante} {est.es_docente === 1 && <span className="badge bg-info">👨‍🏫</span>}
+                    </h5>
+                    <div className="text-muted" style={{ fontSize: '0.95em' }}>
+                      <span className="me-3"><strong>Doc. Estudiante:</strong> {est.documento_estudiante}</span>
+                      <span className="me-3"><strong>Curso:</strong> {est.curso}</span>
+
+                    </div>
+                  </div>
+
+                </div>
+                <div className="mt-2 ">
+                  <h5 className="fw-bold">Acudiente: {est.nombre_acudiente}</h5>
+                </div>
+                <span className=" text-muted"><strong>Doc. Acudiente:</strong> {est.documento_acudiente}</span>
+                <span className='ms-4 text-muted'>
+                  <strong>Referencia:</strong>
+                  {est.referencia_pago
+                    ? <span className="badge text-dark ms-1">{est.referencia_pago}</span>
+                    : <span className="text-muted ms-1">-</span>
+                  }
+                </span>
+
+
+                <div className="row row-cols-2 row-cols-md-3 row-cols-lg-6 text-center mt-4">
+                  <div><small>Matrícula:</small><br /><strong>${parseInt(est.valor_matricula).toLocaleString('es-CO')}</strong></div>
+                  <div><small>Pensión:</small><br /><strong>${parseInt(est.valor_pension).toLocaleString('es-CO')}</strong></div>
+                  <div><small>Carné:</small><br /><strong>${parseInt(est.valor_carne).toLocaleString('es-CO')}</strong></div>
+                  <div><small>Agenda:</small><br /><strong>${parseInt(est.valor_agenda).toLocaleString('es-CO')}</strong></div>
+                  <div><small>Seguro:</small><br /><strong>${parseInt(est.valor_seguro).toLocaleString('es-CO')}</strong></div>
+                  <div><small>Meses pagados:</small><br />{meses.length > 0 ? meses.map((m, i) => <span key={i} className="badge bg-secondary me-1">{m}</span>) : '-'}</div>
+                </div>
+
+                {/* NUEVO: Meses faltantes por pagar */}
+                <div className="mt-3">
+                  <small className="text-muted">Meses que faltan por pagar:</small><br />
+                  {deuda === 0
+                    ? <span className="badge bg-success">Al día</span>
+                    : ningunoFalta
+                      ? <span className="badge bg-success">No debe meses</span>
+                      : todosFaltan
+                        ? mesesDelAno.map((m, i) => <span key={i} className="badge bg-danger me-1">{m}</span>)
+                        : mesesFaltantes.map((m, i) => <span key={i} className="badge bg-danger me-1">{m}</span>)
+                  }
+                </div>
+
+                <div className="mt-3">
+                  <small className="text-muted">Pagos realizados:</small><br />
+                  {pagoMatricula && <span className="badge bg-success me-1">✔ Matrícula</span>}
+                  {pagoPensiones && <span className="badge bg-primary me-1">✔ Pensiones</span>}
+                  {!pagoMatricula && !pagoPensiones && <span className="badge bg-warning text-dark">⚠️ Sin pagos registrados</span>}
+                </div>
+
+                <hr />
+                <div className="row">
+                  <div className="col-md-4"><strong>Total Pagado:</strong> <span className="text-success">${total.toLocaleString('es-CO')}</span></div>
+                  <div className="col-md-4"><strong>Deuda:</strong> <span className={deuda > 0 ? 'text-danger fw-bold' : 'text-success'}>${deuda.toLocaleString('es-CO')}</span></div>
+                  <div className="col-md-4 text-end">
+                    <button className="btn btn-warning btn-sm me-2" onClick={() => editar(est)}>✏️</button>
+                    <button className="btn btn-danger btn-sm" onClick={() => eliminar(est.id)}>🗑️</button>
+                  </div>
+                </div>
+
+                <div className="mt-2 text-muted">
+                  <small><strong>ID:</strong> {est.id || '-'} | <strong>Obs:</strong> {est.observaciones || 'Sin Observaciones'}</small>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
