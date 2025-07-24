@@ -176,17 +176,6 @@ export default function Index() {
                                                 <div className='card-back d-flex flex-column justify-content-center align-items-center text-dark text-center px-3 rounded-4'>
                                                     <h5>{nivel.titulo}</h5>
                                                     <p>{nivel.reverso}</p>
-                                                    <a className="btn btn-primary mt-2 col-sm-6 shadow hover-effect" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                                        style={{
-                                                            background: 'linear-gradient(80deg,rgb(0, 26, 173),rgb(0, 132, 255))',
-                                                            border: 'none',
-                                                            borderRadius: '8px',
-                                                            color: 'white',
-                                                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                                                            transition: 'all 0.3s ease',
-                                                        }}>
-                                                        POSTULARME
-                                                    </a>
                                                 </div>
 
                                             </div>
@@ -259,110 +248,6 @@ export default function Index() {
                         )}
                     </div>
 
-
-
-                    {/* MODAL POSTUALRME */}
-                    <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <form>
-                                    <div className="modal-header">
-                                        <h1 className="modal-title fs-5" id="exampleModalLabel">Editar</h1>
-                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-
-                                    <div className="modal-body px-4">
-                                        <p className='text-muted'>Al postularte recibiras una llamada para recibir toda la información necesaria</p>
-                                        <div className="mb-3 d-flex align-items-center">
-
-                                            <label htmlFor="input-nombre" className="col-4 col-form-label fw-semibold text-end pe-3">Nombre:</label>
-                                            <div className="col-8">
-                                                <input
-                                                    required
-                                                    type="text"
-                                                    id="input-nombre"
-                                                    className="form-control"
-                                                    placeholder="Nombre de la persona que se va a postular"
-                                                    pattern="^[A-Za-z\s]+$"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="mb-3 d-flex align-items-center">
-                                            <label htmlFor="input-contacto" className="col-4 col-form-label fw-semibold text-end pe-3">Número de contacto:</label>
-                                            <div className="col-8">
-                                                <input
-                                                    required
-                                                    type="tel"
-                                                    id="input-contacto"
-                                                    className="form-control"
-                                                    placeholder="Número de contacto"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="mb-3 d-flex align-items-center">
-                                            <label htmlFor="input-nivel" className="col-5 col-form-label fw-semibold text-start">Deseo postularme a:</label>
-                                            <select
-                                                id="input-nivel"
-                                                name="id_categoria_producto"
-                                                className="form-select"
-                                                value={nivelSeleccionado}
-                                                onChange={(e) => {
-                                                    setNivelSeleccionado(e.target.value);
-                                                    setCursoSeleccionado('');
-                                                }}
-                                                required
-                                            >
-                                                <option value="" disabled>Seleccione una opción</option>
-                                                <option value="primaria">BÁSICA PRIMARIA</option>
-                                                <option value="secundaria">BÁSICA SECUNDARIA</option>
-                                                <option value="media">MEDIA</option>
-                                            </select>
-                                        </div>
-
-                                        {nivelSeleccionado && (
-                                            <div className="mb-3 d-flex align-items-center">
-                                                <label htmlFor="input-curso" className="col-5 col-form-label fw-semibold text-start">Seleccione el curso:</label>
-                                                <select
-                                                    id="input-curso"
-                                                    name="curso"
-                                                    className="form-select"
-                                                    value={cursoSeleccionado}
-                                                    onChange={(e) => setCursoSeleccionado(e.target.value)}
-                                                    required
-                                                >
-                                                    <option value="" disabled>Seleccione un curso</option>
-                                                    {nivelSeleccionado === 'primaria' &&
-                                                        ['1º', '2º', '3º', '4º', '5º'].map(curso => (
-                                                            <option key={curso} value={curso}>{curso}</option>
-                                                        ))
-                                                    }
-                                                    {nivelSeleccionado === 'secundaria' &&
-                                                        ['6º', '7º', '8º', '9º'].map(curso => (
-                                                            <option key={curso} value={curso}>{curso}</option>
-                                                        ))
-                                                    }
-                                                    {nivelSeleccionado === 'media' &&
-                                                        ['10º', '11º'].map(curso => (
-                                                            <option key={curso} value={curso}>{curso}</option>
-                                                        ))
-                                                    }
-                                                </select>
-                                            </div>
-                                        )}
-                                    </div>
-
-
-                                    <div className="modal-footer">
-                                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                        <button type="submit" className="btn btn-info text-white">Postularme</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    {/*FIN MODAL POSTUALRME */}
                 </div>
 
                 <hr className='text-dark w-75 mx-auto' style={{ marginTop: "100px" }} />
