@@ -136,9 +136,27 @@ export default function Crud() {
       es_docente: !!est.es_docente,
       descuento_pension: parseFloat(est.descuento_pension || 0),
       recibo_caja: est.recibo_caja || '',
-      incluye_carne: est.carnet === 1 || est.incluye_carne === true,
-      incluye_agenda: est.agenda === 1 || est.incluye_agenda === true,
-      incluye_seguro: est.seguro === 1 || est.incluye_seguro === true
+      incluye_carne:
+        est.carnet === 1 ||
+        est.carnet === true ||
+        est.carnet === "1" ||
+        est.incluye_carne === true ||
+        est.incluye_carne === 1 ||
+        est.incluye_carne === "1",
+      incluye_agenda:
+        est.agenda === 1 ||
+        est.agenda === true ||
+        est.agenda === "1" ||
+        est.incluye_agenda === true ||
+        est.incluye_agenda === 1 ||
+        est.incluye_agenda === "1",
+      incluye_seguro:
+        est.seguro === 1 ||
+        est.seguro === true ||
+        est.seguro === "1" ||
+        est.incluye_seguro === true ||
+        est.incluye_seguro === 1 ||
+        est.incluye_seguro === "1"
     });
     if (formRef.current) {
       formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
