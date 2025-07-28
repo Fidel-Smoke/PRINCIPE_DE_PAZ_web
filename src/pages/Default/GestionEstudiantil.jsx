@@ -114,6 +114,7 @@ export default function GestionEstudiantil() {
 
     if (form.id) {
       await API.put(`/actualizarEstudiante/${form.id}`, data);
+      alert('Estudiante actualizado exitosamente.');
     } else {
       await API.post('/crearEstudiante', data);
       alert('Estudiante registrado exitosamente.');
