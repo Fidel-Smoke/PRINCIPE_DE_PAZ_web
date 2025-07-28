@@ -15,7 +15,7 @@ export default function NavbarCrud() {
         <nav className={`navbar navbar-expand-lg fixed-top ${scrolled ? 'bg-white shadow' : 'bg-transparent'}`}>
             <div className="container-fluid px-4 d-flex justify-content-between align-items-center">
 
-                <a href="/Crud" className="d-flex align-items-center">
+                <a href="/GestionEstudiantil" className="d-flex align-items-center">
                     <img src="/principe.png" alt="Logo Colegio" style={{ width: '120px', height: '70px' }} />
                 </a>
 

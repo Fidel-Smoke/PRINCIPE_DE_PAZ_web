@@ -3,6 +3,7 @@ import axios from 'axios';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import NavbarCrud from '../../components/NavbarEstudiantil';
+import API from '../../api/api';
 
 export default function GestionEstudiantil() {
   const [estudiantes, setEstudiantes] = useState([]);
@@ -51,7 +52,7 @@ export default function GestionEstudiantil() {
   ];
 
   const cargarEstudiantes = async () => {
-    const res = await axios.get('http://localhost:8080/traerEstudiante');
+    const res = await API.get('/traerEstudiante');
     setEstudiantes(res.data);
   };
 
@@ -113,9 +114,9 @@ export default function GestionEstudiantil() {
     }
 
     if (form.id) {
-      await axios.put(`http://localhost:8080/actualizarEstudiante/${form.id}`, data);
+      await API.put(`/actualizarEstudiante/${form.id}`, data);
     } else {
-      await axios.post('http://localhost:8080/crearEstudiante', data);
+      await API.post('/crearEstudiante', data);
       alert('Estudiante registrado exitosamente.');
     }
 
@@ -165,7 +166,7 @@ export default function GestionEstudiantil() {
 
   const eliminar = async id => {
     if (window.confirm('¿Eliminar este estudiante?')) {
-      await axios.delete(`http://localhost:8080/eliminarEstudiante/${id}`);
+      await API.delete(`/eliminarEstudiante/${id}`);
       cargarEstudiantes();
     }
   };
