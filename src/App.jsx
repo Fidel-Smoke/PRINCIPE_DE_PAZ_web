@@ -3,15 +3,15 @@ import './App.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Index from './pages/Default/Index.jsx';
-import Crud from './pages/Default/Crud.jsx';
+import GestionEstudiantil from './pages/Default/GestionEstudiantil.jsx';
 
 function App() {
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/Crud" element={<Crud />} />
+        <Route path="/" element={<GestionEstudiantil />} />
+        <Route path="/index" element={<Index />} />
 
       </Routes>
     </BrowserRouter>

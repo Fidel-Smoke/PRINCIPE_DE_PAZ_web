@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import NavbarCrud from '../../components/NavbarCrud';
+import NavbarCrud from '../../components/NavbarEstudiantil';
 
-export default function Crud() {
+export default function GestionEstudiantil() {
   const [estudiantes, setEstudiantes] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [form, setForm] = useState({
@@ -355,7 +355,7 @@ export default function Crud() {
                       <strong>
                         {parseInt(est.valor_carne) > 0
                           ? `$${parseInt(est.valor_carne).toLocaleString('es-CO')}`
-                          : <span className="badge bg-warning text-dark">No incluido</span>
+                          : <span className="badge bg-danger text-white">No incluido</span>
                         }
                       </strong>
                     </div>
@@ -364,7 +364,7 @@ export default function Crud() {
                       <strong>
                         {parseInt(est.valor_agenda) > 0
                           ? `$${parseInt(est.valor_agenda).toLocaleString('es-CO')}`
-                          : <span className="badge bg-warning text-dark">No incluida</span>
+                          : <span className="badge bg-danger text-white">No incluida</span>
                         }
                       </strong>
                     </div>
@@ -405,7 +405,7 @@ export default function Crud() {
                   <div className="mt-3">
                     <small className="text-muted">Pagos realizados:</small><br />
                     {pagoMatricula && <span className="badge bg-success me-1">✔ Matrícula</span>}
-                    {est.valor_carne > 0 && <span className="badge bg-success me-1">✔ Carné</span>}
+                    {est.valor_carne > 0 && <span className="badge bg-success me-1">✔ Carnet</span>}
                     {est.valor_agenda > 0 && <span className="badge bg-success me-1">✔ Agenda</span>}
                     {est.valor_seguro > 0 && <span className="badge bg-success me-1">✔ Seguro</span>}
                     {pagoPensiones && <span className="badge bg-primary me-1">✔ Pensiones</span>}

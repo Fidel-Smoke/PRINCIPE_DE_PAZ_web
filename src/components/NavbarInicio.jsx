@@ -36,7 +36,7 @@ export default function NavbarInicio() {
                         <li className='hover-link'><a className="dropdown-item" href="#">Inicio</a></li>
                         <li className='hover-link'><a className="dropdown-item" href="#">Nosotros</a></li>
                         <li><hr className="dropdown-divider" /></li>
-                        <li className='hover-link'><a className="dropdown-item" href="/Crud">Estudiantes</a></li>
+                        <li className='hover-link'><a className="dropdown-item" href="/GestionEstudiantil">Estudiantes</a></li>
                     </ul>
                 </div>
 
