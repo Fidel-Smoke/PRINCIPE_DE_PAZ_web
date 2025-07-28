@@ -6,7 +6,6 @@ import Index from './pages/Default/Index.jsx';
 import GestionEstudiantil from './pages/Default/GestionEstudiantil.jsx';
 
 function App() {
-
   return (
     <BrowserRouter>
       <Routes>
