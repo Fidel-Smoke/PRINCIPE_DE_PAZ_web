@@ -34,7 +34,7 @@ export default function NavbarCrud() {
 
                     <ul className="dropdown-menu dropdown-menu-end " aria-labelledby="menuDropdown">
                         <li className='hover-link'><a className="dropdown-item" href="#">Inicio</a></li>
-                        <li className='hover-link'><a className="dropdown-item" href="/Index">Volver A La Pagina De Inicio</a></li>
+                        <li className='hover-link'><a className="dropdown-item" href="/">Volver A La Pagina De Inicio</a></li>
                     </ul>
                 </div>
 
