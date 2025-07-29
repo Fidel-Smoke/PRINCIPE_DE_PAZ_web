@@ -57,6 +57,27 @@ export default function GestionEstudiantil() {
 
   useEffect(() => { cargarEstudiantes(); }, []);
 
+
+
+  useEffect(() => {
+    const acceso = localStorage.getItem("accesoEstudiantes");
+
+    if (acceso !== "true") {
+      window.location.replace("/");
+    }
+
+    // Elimina el acceso SOLO si el usuario cierra o cambia de pestaña
+    const handleUnload = () => {
+      localStorage.removeItem("accesoEstudiantes");
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, []);
+
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
     setForm({

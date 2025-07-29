@@ -15,12 +15,14 @@ export default function NavbarInicio() {
 
     const handleAccess = () => {
         if (password === 'cpp_2025*') {
-            window.location.href = "/GestionEstudiantil";
+            localStorage.setItem("accesoEstudiantes", "true");
             alert('Acceso concedido');
+            window.location.href = "/GestionEstudiantil";
         } else {
             alert('Contraseña incorrecta');
         }
     };
+
 
     return (
         <>
@@ -42,10 +44,10 @@ export default function NavbarInicio() {
                         </button>
 
                         <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
-                            <li className='hover-link'><a className="dropdown-item" href="#">Inicio</a></li>
-                            <li className='hover-link'><a className="dropdown-item" href="#">Nosotros</a></li>
+                            <li><a className="dropdown-item" href="#">Inicio</a></li>
+                            <li><a className="dropdown-item" href="#">Nosotros</a></li>
                             <li><hr className="dropdown-divider" /></li>
-                            <li className='hover-link'>
+                            <li>
                                 <button className="dropdown-item" onClick={() => setShowModal(true)}>Estudiantes</button>
                             </li>
                         </ul>
@@ -53,18 +55,22 @@ export default function NavbarInicio() {
                 </div>
             </nav>
 
-            {/* Modal Bootstrap */}
+            {/* Modal */}
             {showModal && (
                 <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">Acceso restringido</h5>
-                                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                                <h5 className="modal-title">Acceso Restringido</h5>
+                                <button type="button" className="btn-close" onClick={() => {
+                                    setShowModal(false);
+                                    setPassword('');
+                                }}></button>
                             </div>
                             <div className="modal-body">
-                                <label>Ingrese la contraseña:</label>
+                                <label htmlFor="passwordInput">Ingrese la contraseña:</label>
                                 <input
+                                    id="passwordInput"
                                     type="password"
                                     className="form-control mt-2"
                                     value={password}
@@ -72,7 +78,10 @@ export default function NavbarInicio() {
                                 />
                             </div>
                             <div className="modal-footer">
-                                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
+                                <button className="btn btn-secondary" onClick={() => {
+                                    setShowModal(false);
+                                    setPassword('');
+                                }}>Cancelar</button>
                                 <button className="btn btn-primary" onClick={handleAccess}>Acceder</button>
                             </div>
                         </div>
