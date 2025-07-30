@@ -66,17 +66,17 @@ export default function GestionEstudiantil() {
       window.location.replace("/");
     }
 
-    // Elimina el acceso SOLO si el usuario cierra o cambia de pestaña
-    const handleUnload = () => {
+    const handlePopState = () => {
       localStorage.removeItem("accesoEstudiantes");
     };
 
-    window.addEventListener("beforeunload", handleUnload);
+    window.addEventListener("popstate", handlePopState);
 
     return () => {
-      window.removeEventListener("beforeunload", handleUnload);
+      window.removeEventListener("popstate", handlePopState);
     };
   }, []);
+
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
