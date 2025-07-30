@@ -67,6 +67,7 @@ export default function GestionEstudiantil() {
     }
 
     const handlePopState = () => {
+      // Elimina el acceso si el usuario regresa con el botón de atrás
       localStorage.removeItem("accesoEstudiantes");
     };
 
