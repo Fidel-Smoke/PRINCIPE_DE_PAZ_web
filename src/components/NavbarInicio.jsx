@@ -15,7 +15,7 @@ export default function NavbarInicio() {
 
     const handleAccess = () => {
         if (password === 'cpp_2025*') {
-            sessionStorage.setItem("accesoEstudiantes", "true");
+            localStorage.setItem("accesoEstudiantes", "true");
             alert('Acceso concedido');
             window.location.href = "/GestionEstudiantil";
         } else {

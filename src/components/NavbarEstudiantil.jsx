@@ -10,6 +10,11 @@ export default function NavbarCrud() {
         window.addEventListener('scroll', onScroll);
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
+    
+    const hadleCerrarSesion = () => {
+        localStorage.removeItem("accesoEstudiantes");
+        window.location.href = "/";
+    };
 
     return (
         <nav className={`navbar navbar-expand-lg fixed-top ${scrolled ? 'bg-white shadow' : 'bg-transparent'}`}>
@@ -18,7 +23,6 @@ export default function NavbarCrud() {
                 <a href="/GestionEstudiantil" className="d-flex align-items-center">
                     <img src="/principe.png" alt="Logo Colegio" style={{ width: '120px', height: '70px' }} />
                 </a>
-
 
 
                 <div className="dropdown">
@@ -34,7 +38,7 @@ export default function NavbarCrud() {
 
                     <ul className="dropdown-menu dropdown-menu-end " aria-labelledby="menuDropdown">
                         <li className='hover-link'><a className="dropdown-item" href="#">Inicio</a></li>
-                        <li className='hover-link'><a className="dropdown-item" href="/">Volver A La Pagina De Inicio</a></li>
+                        <li className='hover-link'><a className="dropdown-item" href="/" onClick={hadleCerrarSesion}>Cerrar Sesión</a></li>
                     </ul>
                 </div>
 
