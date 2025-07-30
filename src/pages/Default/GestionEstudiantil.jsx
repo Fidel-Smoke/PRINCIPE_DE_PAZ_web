@@ -60,15 +60,14 @@ export default function GestionEstudiantil() {
 
 
   useEffect(() => {
-    const acceso = localStorage.getItem("accesoEstudiantes");
+    const acceso = sessionStorage.getItem("accesoEstudiantes");
 
     if (acceso !== "true") {
       window.location.replace("/");
     }
 
     const handlePopState = () => {
-      // Elimina el acceso si el usuario regresa con el botón de atrás
-      localStorage.removeItem("accesoEstudiantes");
+      sessionStorage.removeItem("accesoEstudiantes");
     };
 
     window.addEventListener("popstate", handlePopState);

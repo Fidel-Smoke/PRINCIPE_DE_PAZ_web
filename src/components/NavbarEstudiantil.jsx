@@ -10,9 +10,9 @@ export default function NavbarCrud() {
         window.addEventListener('scroll', onScroll);
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
-    
+
     const hadleCerrarSesion = () => {
-        localStorage.removeItem("accesoEstudiantes");
+        sessionStorage.removeItem("accesoEstudiantes");
         window.location.href = "/";
     };
 
