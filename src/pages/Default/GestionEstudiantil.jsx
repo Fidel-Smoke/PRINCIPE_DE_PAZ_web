@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import NavbarCrud from '../../components/NavbarEstudiantil';
 import API from '../../api/api';
-import Swal from 'sweetalert2'; // ✅ Importamos SweetAlert2
+import Swal from 'sweetalert2'; 
 
 export default function GestionEstudiantil() {
   const [estudiantes, setEstudiantes] = useState([]);
