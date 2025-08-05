@@ -3,10 +3,17 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import NavbarCrud from '../../components/NavbarEstudiantil';
 import API from '../../api/api';
+import Swal from 'sweetalert2'; // ✅ Importamos SweetAlert2
 
 export default function GestionEstudiantil() {
   const [estudiantes, setEstudiantes] = useState([]);
   const [busqueda, setBusqueda] = useState('');
+  const estudiantesFiltrados = estudiantes.filter(est =>
+    est.nombre_estudiante.toLowerCase().includes(busqueda.toLowerCase()) ||
+    String(est.documento_estudiante).toLowerCase().includes(busqueda.toLowerCase()) ||
+    est.curso.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   const [form, setForm] = useState({
     nombre_estudiante: '',
     documento_estudiante: '',
@@ -57,26 +64,19 @@ export default function GestionEstudiantil() {
 
   useEffect(() => { cargarEstudiantes(); }, []);
 
-
-
   useEffect(() => {
     const acceso = sessionStorage.getItem("accesoEstudiantes");
-
     if (acceso !== "true") {
       window.location.replace("/");
     }
-
     const handlePopState = () => {
       sessionStorage.removeItem("accesoEstudiantes");
     };
-
     window.addEventListener("popstate", handlePopState);
-
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
   }, []);
-
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -88,6 +88,7 @@ export default function GestionEstudiantil() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+
     const cursoRaw = form.curso.trim().toUpperCase();
     let grado = 'TR';
     const match = cursoRaw.match(/^\d{1,2}/);
@@ -124,25 +125,39 @@ export default function GestionEstudiantil() {
 
     const repetido = estudiantes.find(est => String(est.documento_estudiante).trim() === String(form.documento_estudiante).trim() && est.id !== form.id);
     if (repetido) {
-      alert('Ya existe un estudiante con ese documento.');
+      Swal.fire("Error", "Ya existe un estudiante con ese documento.", "error");
       return;
     }
 
     if (!form.nombre_estudiante || !form.documento_estudiante || !form.curso || !form.nombre_acudiente || !form.documento_acudiente) {
-      alert('Por favor, completa todos los campos obligatorios.');
+      Swal.fire("Campos incompletos", "Por favor, completa todos los campos obligatorios.", "warning");
       return;
     }
 
     if (form.id) {
       await API.put(`/actualizarEstudiante/${form.id}`, data);
-      alert('Estudiante actualizado exitosamente.');
+      Swal.fire({
+        icon: 'success',
+        title: 'Estudiante actualizado',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     } else {
       await API.post('/crearEstudiante', data);
-      alert('Estudiante registrado exitosamente.');
+      Swal.fire({
+        icon: 'success',
+        title: 'Estudiante registrado',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     }
 
     setForm({
-      nombre_estudiante: '', documento_estudiante: '', curso: '', nombre_acudiente: '', documento_acudiente: '', observaciones: '', referencia_pago: '', recibo_caja: '', meses_pagados: [], es_docente: false, descuento_pension: 0, incluye_carne: true, incluye_agenda: true, incluye_seguro: true
+      nombre_estudiante: '', documento_estudiante: '', curso: '', nombre_acudiente: '', documento_acudiente: '',
+      observaciones: '', referencia_pago: '', recibo_caja: '', meses_pagados: [], es_docente: false,
+      descuento_pension: 0, incluye_carne: true, incluye_agenda: true, incluye_seguro: true
     });
     cargarEstudiantes();
 
@@ -158,27 +173,9 @@ export default function GestionEstudiantil() {
       es_docente: !!est.es_docente,
       descuento_pension: parseFloat(est.descuento_pension || 0),
       recibo_caja: est.recibo_caja || '',
-      incluye_carne:
-        est.carnet === 1 ||
-        est.carnet === true ||
-        est.carnet === "1" ||
-        est.incluye_carne === true ||
-        est.incluye_carne === 1 ||
-        est.incluye_carne === "1",
-      incluye_agenda:
-        est.agenda === 1 ||
-        est.agenda === true ||
-        est.agenda === "1" ||
-        est.incluye_agenda === true ||
-        est.incluye_agenda === 1 ||
-        est.incluye_agenda === "1",
-      incluye_seguro:
-        est.seguro === 1 ||
-        est.seguro === true ||
-        est.seguro === "1" ||
-        est.incluye_seguro === true ||
-        est.incluye_seguro === 1 ||
-        est.incluye_seguro === "1"
+      incluye_carne: est.carnet === 1 || est.carnet === true || est.carnet === "1" || est.incluye_carne === true || est.incluye_carne === 1 || est.incluye_carne === "1",
+      incluye_agenda: est.agenda === 1 || est.agenda === true || est.agenda === "1" || est.incluye_agenda === true || est.incluye_agenda === 1 || est.incluye_agenda === "1",
+      incluye_seguro: est.seguro === 1 || est.seguro === true || est.seguro === "1" || est.incluye_seguro === true || est.incluye_seguro === 1 || est.incluye_seguro === "1"
     });
     if (formRef.current) {
       formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -186,9 +183,25 @@ export default function GestionEstudiantil() {
   };
 
   const eliminar = async id => {
-    if (window.confirm('¿Eliminar este estudiante?')) {
+    const result = await Swal.fire({
+      title: '¿Eliminar este estudiante?',
+      text: "Esta acción no se puede deshacer.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
       await API.delete(`/eliminarEstudiante/${id}`);
       cargarEstudiantes();
+      Swal.fire({
+        icon: 'success',
+        title: 'Estudiante eliminado',
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
     }
   };
 
@@ -199,17 +212,15 @@ export default function GestionEstudiantil() {
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(blob, 'estudiantes.xlsx');
+    Swal.fire({
+      icon: 'success',
+      title: 'Exportado correctamente',
+      text: 'El archivo Excel ha sido generado.',
+      timer: 2000,
+      timerProgressBar: true,
+      showConfirmButton: false
+    });
   };
-
-  const estudiantesFiltrados = busqueda.trim() === '' ? estudiantes : estudiantes.filter(est => {
-    const busq = busqueda.toLowerCase();
-    return (
-      est.nombre_estudiante.toLowerCase().includes(busq) ||
-      est.documento_estudiante.toLowerCase().includes(busq) ||
-      est.nombre_acudiente.toLowerCase().includes(busq) ||
-      est.curso.toLowerCase().includes(busq)
-    );
-  });
 
   return (<div className="container py-4">
     <NavbarCrud />
@@ -229,7 +240,7 @@ export default function GestionEstudiantil() {
             ['observaciones', 'Observaciones']
           ].map(([name, placeholder]) => (
             <div className="col-md-6" key={name}>
-              <input className="form-control" name={name} value={form[name]} onChange={handleChange} placeholder={placeholder} required={name !== 'observaciones' && name !== 'referencia_pago'} />
+              <input className="form-control" name={name} value={form[name]} onChange={handleChange} placeholder={placeholder} />
             </div>
           ))}
 
