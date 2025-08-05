@@ -341,9 +341,18 @@ export default function GestionEstudiantil() {
                 <div className="card-body">
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2">
                     <div>
-                      <h5 className="card-title fw-bold mb-1">
-                        Estudiante: {est.nombre_estudiante} {est.es_docente === 1 && <span className="badge bg-info">👨‍🏫</span>}
-                      </h5>
+                      <div className="d-flex align-items-center me-3">
+                        <div className="mt-2 ">
+                          <h5 className="fw-bold">Estudiante: {est.nombre_estudiante}</h5>
+                        </div>
+
+                        {(est.es_docente === 1 || est.es_docente === "1" || est.es_docente === true) && (
+                          <span className="badge bg-info ms-3">👨‍🏫 Hijo De Trabajador</span>
+                        )}
+                      </div>
+
+
+
                       <div className="text-muted" style={{ fontSize: '0.95em' }}>
                         <span className="me-3"><strong>Doc. Estudiante:</strong> {est.documento_estudiante}</span>
                         <span className="me-3"><strong>Curso:</strong> {est.curso}</span>
