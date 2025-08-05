@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import NavbarCrud from '../../components/NavbarEstudiantil';
 import API from '../../api/api';
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 
 export default function GestionEstudiantil() {
   const [estudiantes, setEstudiantes] = useState([]);
@@ -285,20 +285,28 @@ export default function GestionEstudiantil() {
 
         <div className="mt-4 d-flex justify-content-between">
           <button type="submit" className="btn btn-primary">{form.id ? 'Actualizar' : 'Registrar'}</button>
-          <button type="button" className="btn btn-success" onClick={exportarExcel}>📤 Exportar A Excel</button>
         </div>
       </form>
 
       <div ref={listaRef} className="container py-3">
         <h2 className="text-center text-white fw-bold mb-4 fs-2">🎓 Estudiantes Registrados</h2>
-
-        <input
-          type="text"
-          className="form-control mb-4"
-          placeholder="🔍 Buscar por nombre, documento, curso..."
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-        />
+        <div className="col d-flex justify-content-between align-items-center mb-4">
+          <input
+            type="text"
+            className="form-control"
+            style={{ width: '35%' }}
+            placeholder="🔍 Buscar por nombre, documento, curso..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+          <button
+            type="button"
+            className="btn btn-success"
+            onClick={exportarExcel}
+          >
+            📤 Exportar A Excel
+          </button>
+        </div>
 
         {estudiantesFiltrados.length === 0 ? (
           <div className="alert alert-warning text-center">
