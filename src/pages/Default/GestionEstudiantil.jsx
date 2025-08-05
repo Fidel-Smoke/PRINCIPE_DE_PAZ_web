@@ -301,7 +301,7 @@ export default function GestionEstudiantil() {
           />
           <button
             type="button"
-            className="btn btn-success"
+            className="btn btn-primary text-white"
             onClick={exportarExcel}
           >
             📤 Exportar A Excel

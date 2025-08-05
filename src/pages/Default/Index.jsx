@@ -304,7 +304,7 @@ export default function Index() {
 
 
             <div className="bg-light">
-                <footer className=" pt-5 pb-3 border-top mx-auto">
+                <footer className=" pt-5 pb-3 border-top mx-auto ms-4">
                     <div className="container">
                         <div className="row">
                             <div className="col-md-3 mb-4">
@@ -321,7 +321,7 @@ export default function Index() {
                                 <p className="mb-1">Email: info@colegioprincipepaz.edu</p>
                                 <p className="d-block text-primary">Para quejas y reclamos</p>
                             </div>
-                            <div className="col-md-2 mb-4">
+                            <div className="col-md-2 mb-4 ms-5">
                                 <h6 className="fw-bold mb-2">Quiénes somos</h6>
                                 <ul className="list-unstyled">
                                     <li><a href="#" className="text-muted text-decoration-none">Nosotros</a></li>
@@ -329,14 +329,14 @@ export default function Index() {
                                     <li><a href="#" className="text-muted text-decoration-none">Valores</a></li>
                                 </ul>
                             </div>
-                            <div className="col-md-2 mb-4">
+                            <div className="col-md-2 mb-4 ms-5">
                                 <h6 className="fw-bold mb-2">Políticas</h6>
                                 <ul className="list-unstyled">
                                     <li><a href="#" className="text-muted text-decoration-none">Política de Privacidad</a></li>
                                     <li><a href="#" className="text-muted text-decoration-none">Términos y Condiciones</a></li>
                                 </ul>
                             </div>
-                            <div className="d-flex gap-3 ">
+                            {/* <div className="d-flex gap-3 ">
                                 <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer">
                                     <img
                                         src="./app.png"
@@ -355,7 +355,7 @@ export default function Index() {
                                         onMouseOut={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)"; }}
                                     />
                                 </a>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="row mt-4">
                             <div className="col-md-8 text-muted small">
