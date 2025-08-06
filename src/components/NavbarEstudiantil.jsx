@@ -18,7 +18,8 @@ export default function NavbarCrud() {
             title: 'Sesión cerrada',
             text: 'Has cerrado sesión correctamente',
             icon: 'success',
-            confirmButtonText: 'Aceptar'
+            confirmButtonText: 'Aceptar',
+            timer: 90000  
         }).then(() => {
             window.location.href = "/";
         });
