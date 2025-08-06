@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 
 export default function NavbarInicio() {
     const [scrolled, setScrolled] = useState(false);
@@ -16,10 +17,21 @@ export default function NavbarInicio() {
     const handleAccess = () => {
         if (password === 'cpp_2025*') {
             sessionStorage.setItem("accesoEstudiantes", "true");
-            alert('Acceso concedido');
-            window.location.href = "/GestionEstudiantil";
+            Swal.fire({
+                title: 'Acceso concedido',
+                text: 'Bienvenido a la sección de gestión estudiantil',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                window.location.href = "/GestionEstudiantil";
+            });
         } else {
-            alert('Contraseña incorrecta');
+            Swal.fire({
+                title: 'Acceso denegado',
+                text: 'La contraseña ingresada es incorrecta',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
         }
     };
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 
 export default function NavbarCrud() {
     const [scrolled, setScrolled] = useState(false);
@@ -13,7 +14,14 @@ export default function NavbarCrud() {
 
     const hadleCerrarSesion = () => {
         sessionStorage.removeItem("accesoEstudiantes");
-        window.location.href = "/";
+        Swal.fire({
+            title: 'Sesión cerrada',
+            text: 'Has cerrado sesión correctamente',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+        }).then(() => {
+            window.location.href = "/";
+        });
     };
 
     return (
