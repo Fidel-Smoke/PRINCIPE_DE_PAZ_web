@@ -15,13 +15,13 @@ export default function NavbarCrud() {
     const hadleCerrarSesion = () => {
         sessionStorage.removeItem("accesoEstudiantes");
         Swal.fire({
-            title: 'Sesión cerrada',
-            text: 'Has cerrado sesión correctamente',
             icon: 'success',
-            confirmButtonText: 'Aceptar',
-            timer: 90000  
+            title: 'Sesión cerrada',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
         }).then(() => {
-            window.location.href = "/";
+            window.location.href = "/Index";
         });
     };
 
