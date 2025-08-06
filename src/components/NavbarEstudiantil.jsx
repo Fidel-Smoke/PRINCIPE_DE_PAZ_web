@@ -21,7 +21,7 @@ export default function NavbarCrud() {
             timerProgressBar: true,
             showConfirmButton: false
         }).then(() => {
-            window.location.href = "/Index";
+            window.location.href = "/";
         });
     };
 
