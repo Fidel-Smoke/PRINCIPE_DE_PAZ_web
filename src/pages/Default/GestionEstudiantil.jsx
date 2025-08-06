@@ -13,7 +13,7 @@ export default function GestionEstudiantil() {
     String(est.documento_estudiante).toLowerCase().includes(busqueda.toLowerCase()) ||
     est.curso.toLowerCase().includes(busqueda.toLowerCase())
   );
-
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [form, setForm] = useState({
     nombre_estudiante: '',
     documento_estudiante: '',
@@ -173,13 +173,20 @@ export default function GestionEstudiantil() {
       es_docente: !!est.es_docente,
       descuento_pension: parseFloat(est.descuento_pension || 0),
       recibo_caja: est.recibo_caja || '',
-      incluye_carne: est.carnet === 1 || est.carnet === true || est.carnet === "1" || est.incluye_carne === true || est.incluye_carne === 1 || est.incluye_carne === "1",
-      incluye_agenda: est.agenda === 1 || est.agenda === true || est.agenda === "1" || est.incluye_agenda === true || est.incluye_agenda === 1 || est.incluye_agenda === "1",
-      incluye_seguro: est.seguro === 1 || est.seguro === true || est.seguro === "1" || est.incluye_seguro === true || est.incluye_seguro === 1 || est.incluye_seguro === "1"
+      incluye_carne:
+        est.carnet === 1 || est.carnet === true || est.carnet === "1" ||
+        est.incluye_carne === true || est.incluye_carne === 1 || est.incluye_carne === "1",
+      incluye_agenda:
+        est.agenda === 1 || est.agenda === true || est.agenda === "1" ||
+        est.incluye_agenda === true || est.incluye_agenda === 1 || est.incluye_agenda === "1",
+      incluye_seguro:
+        est.seguro === 1 || est.seguro === true || est.seguro === "1" ||
+        est.incluye_seguro === true || est.incluye_seguro === 1 || est.incluye_seguro === "1"
     });
-    if (formRef.current) {
-      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+
+    setMostrarFormulario(true);
+
+    window.scrollTo(0, 0);
   };
 
   const eliminar = async id => {
@@ -225,87 +232,140 @@ export default function GestionEstudiantil() {
   return (<div className="container py-4">
     <NavbarCrud />
     <div className="mt-5 pt-5">
-      <h2 className="text-center text-white fw-bold mb-4 fs-1">📘 Gestión De Estudiantes - Colegio Príncipe de Paz</h2>
 
-      <form ref={formRef} onSubmit={handleSubmit} className="card p-4 shadow-sm mb-5">
-        <div className="row g-3">
-          {[
-            ['nombre_estudiante', 'Nombre estudiante'],
-            ['documento_estudiante', 'Documento'],
-            ['curso', 'Curso'],
-            ['nombre_acudiente', 'Nombre acudiente'],
-            ['documento_acudiente', 'Documento acudiente'],
-            ['referencia_pago', 'Referencia de pago'],
-            ['recibo_caja', 'R.C. (Recibo de Caja)'],
-            ['observaciones', 'Observaciones']
-          ].map(([name, placeholder]) => (
-            <div className="col-md-6" key={name}>
-              <input className="form-control" name={name} value={form[name]} onChange={handleChange} placeholder={placeholder} />
+
+      {mostrarFormulario && (
+        <form ref={formRef} onSubmit={handleSubmit} className="card p-4 shadow-sm mb-5">
+          <h2 className="text-center text-black fw-bold mb-4 fs-1">📘 Gestión De Estudiantes - Colegio Príncipe de Paz</h2>
+          <div className="row g-3 mt-2">
+            {[
+              ['nombre_estudiante', 'Nombre estudiante'],
+              ['documento_estudiante', 'Documento'],
+              ['curso', 'Curso'],
+              ['nombre_acudiente', 'Nombre acudiente'],
+              ['documento_acudiente', 'Documento acudiente'],
+              ['referencia_pago', 'Referencia de pago'],
+              ['recibo_caja', 'R.C. (Recibo de Caja)'],
+              ['observaciones', 'Observaciones']
+            ].map(([name, placeholder]) => (
+              <div className="col-md-6" key={name}>
+                <input className="form-control" name={name} value={form[name]} onChange={handleChange} placeholder={placeholder} />
+              </div>
+            ))}
+
+            <div className="d-flex align-items-center">
+              <div className="me-5 ">
+                <label className="form-label mb-0">Descuento pensión (%)</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={form.descuento_pension}
+                  name="descuento_pension"
+                  onChange={handleChange}
+                  style={{ width: "130%" }}
+                />
+              </div>
+
+              <div className="d-flex flex-nowrap align-items-center mt-4">
+                <label className="form-check me-5 ms-5  mb-0">
+                  <input
+                    className="form-check-input me-1"
+                    type="checkbox"
+                    name="es_docente"
+                    checked={form.es_docente}
+                    onChange={handleChange}
+                  />
+                  Docente
+                </label>
+                <label className="form-check me-3 mb-0">
+                  <input
+                    className="form-check-input me-1"
+                    type="checkbox"
+                    name="incluye_carne"
+                    checked={form.incluye_carne}
+                    onChange={handleChange}
+                  />
+                  Incluir Carnet
+                </label>
+                <label className="form-check me-3 mb-0">
+                  <input
+                    className="form-check-input me-1"
+                    type="checkbox"
+                    name="incluye_agenda"
+                    checked={form.incluye_agenda}
+                    onChange={handleChange}
+                  />
+                  Incluir Agenda
+                </label>
+                <label className="form-check me-3 mb-0">
+                  <input
+                    className="form-check-input me-1"
+                    type="checkbox"
+                    name="incluye_seguro"
+                    checked={form.incluye_seguro}
+                    onChange={handleChange}
+                  />
+                  Incluir Seguro
+                </label>
+              </div>
             </div>
-          ))}
 
-          <div className="col-md-4">
-            <label>📉 Descuento pensión (%)</label>
-            <input className="form-control" name="descuento_pension" type="number" min="0" max="100" value={form.descuento_pension} onChange={handleChange} />
-          </div>
 
-          <div className="col-md-4">
-            <label className="form-check">
-              <input className="form-check-input" type="checkbox" name="es_docente" checked={form.es_docente} onChange={handleChange} /> Docente
-            </label>
-            <label className="form-check">
-              <input className="form-check-input" type="checkbox" name="incluye_carne" checked={form.incluye_carne} onChange={handleChange} /> Incluir Carnet
-            </label>
-            <label className="form-check">
-              <input className="form-check-input" type="checkbox" name="incluye_agenda" checked={form.incluye_agenda} onChange={handleChange} /> Incluir Agenda
-            </label>
-            <label className="form-check">
-              <input className="form-check-input" type="checkbox" name="incluye_seguro" checked={form.incluye_seguro} onChange={handleChange} /> Incluir Seguro
-            </label>
-          </div>
-
-          <div className="col-md-12">
-            <label className="form-label">Selecciona los meses pagados:</label>
-            <div className="row">
-              {mesesDelAno.map(mes => (
-                <div className="col-md-3" key={mes}>
-                  <div className="form-check">
-                    <input className="form-check-input" type="checkbox" value={mes} id={`mes-${mes}`} checked={form.meses_pagados.includes(mes)} onChange={e => {
-                      const checked = e.target.checked;
-                      const updated = checked ? [...form.meses_pagados, mes] : form.meses_pagados.filter(m => m !== mes);
-                      setForm({ ...form, meses_pagados: updated });
-                    }} />
-                    <label className="form-check-label" htmlFor={`mes-${mes}`}>{mes}</label>
+            <div className="col-md-12 mt-5 pt-3">
+              <label className="form-label">Selecciona los meses pagados:</label>
+              <div className="row">
+                {mesesDelAno.map(mes => (
+                  <div className="col-md-3" key={mes}>
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" value={mes} id={`mes-${mes}`} checked={form.meses_pagados.includes(mes)} onChange={e => {
+                        const checked = e.target.checked;
+                        const updated = checked ? [...form.meses_pagados, mes] : form.meses_pagados.filter(m => m !== mes);
+                        setForm({ ...form, meses_pagados: updated });
+                      }} />
+                      <label className="form-check-label" htmlFor={`mes-${mes}`}>{mes}</label>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="mt-4 d-flex justify-content-between">
-          <button type="submit" className="btn btn-primary">{form.id ? 'Actualizar' : 'Registrar'}</button>
-        </div>
-      </form>
+          <div className="mt-4 d-flex justify-content-between">
+            <button type="submit" className="btn btn-primary">{form.id ? 'Actualizar' : 'Registrar'}</button>
 
-      <div ref={listaRef} className="container py-3">
-        <h2 className="text-center text-white fw-bold mb-4 fs-2">🎓 Estudiantes Registrados</h2>
-        <div className="col d-flex justify-content-between align-items-center mb-4">
+          </div>
+        </form>
+      )}
+
+
+      <div ref={listaRef} className="container py-3 mt-5">
+        <h2 className="text-center text-white fw-bold mb-4 display-5">🎓 Estudiantes Registrados</h2>
+        <div className="col d-flex justify-content-between align-items-center mb-4 mt-5">
           <input
             type="text"
             className="form-control"
-            style={{ width: '35%' }}
+            style={{ width: '50%' }}
             placeholder="🔍 Buscar por nombre, documento, curso..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
-          <button
-            type="button"
-            className="btn btn-primary text-white"
-            onClick={exportarExcel}
-          >
-            📤 Exportar A Excel
-          </button>
+
+          <div className="d-flex gap-2">
+            <button
+              type="button"
+              className="btn btn-success text-white"
+              onClick={exportarExcel}
+            >
+              📤 Exportar A Excel
+            </button>
+
+            <button
+              className="btn btn border-light text-white mi-tarjeta2"
+              onClick={() => setMostrarFormulario(!mostrarFormulario)}
+            >
+              {mostrarFormulario ? "Cerrar Registro" : "Registrar Estudiante"}
+            </button>
+          </div>
         </div>
 
         {estudiantesFiltrados.length === 0 ? (

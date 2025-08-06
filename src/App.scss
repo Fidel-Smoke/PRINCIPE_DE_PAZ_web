@@ -227,6 +227,20 @@ body::before {
 
 
 //HOVER IMAGEN DEL COLEGIO
+.mi-tarjeta2 {
+  transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.mi-tarjeta2:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  background: linear-gradient(120deg, #636262 0%, #8d8f8c 100%);
+}
+
 .mi-tarjeta {
   transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
