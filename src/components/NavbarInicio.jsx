@@ -15,7 +15,7 @@ export default function NavbarInicio() {
     }, []);
 
     const handleAccess = () => {
-        if (password === 'cpp_2025*') {
+        if (password === import.meta.env.VITE_PASSWORD) {
             sessionStorage.setItem("accesoEstudiantes", "true");
             Swal.fire({
                 title: 'Acceso concedido',
