@@ -465,7 +465,7 @@ export default function GestionEstudiantil() {
                       <strong>
                         {parseInt(est.valor_carne) > 0
                           ? `$${parseInt(est.valor_carne).toLocaleString('es-CO')}`
-                          : <span className="badge bg-danger text-white">No incluido</span>
+                          : <span className="badge bg-danger text-white">Debe Carnet</span>
                         }
                       </strong>
                     </div>
@@ -474,7 +474,7 @@ export default function GestionEstudiantil() {
                       <strong>
                         {parseInt(est.valor_agenda) > 0
                           ? `$${parseInt(est.valor_agenda).toLocaleString('es-CO')}`
-                          : <span className="badge bg-danger text-white">No incluida</span>
+                          : <span className="badge bg-danger text-white">Debe Agenda</span>
                         }
                       </strong>
                     </div>
