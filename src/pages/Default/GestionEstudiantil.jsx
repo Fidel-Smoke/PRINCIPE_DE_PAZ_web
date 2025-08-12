@@ -216,7 +216,6 @@ export default function GestionEstudiantil() {
       return;
     }
 
-    // ===== 1️⃣ Preparar datos detallados =====
     const data = estudiantes.map(est => {
       let meses = [];
       try { meses = JSON.parse(est.meses_pagados || '[]'); } catch { }
@@ -244,7 +243,6 @@ export default function GestionEstudiantil() {
       };
     });
 
-    // ===== 2️⃣ Crear hoja de resumen =====
     const totalEstudiantes = estudiantes.length;
     let totalAlDia = 0, totalConDeuda = 0, sumaPagada = 0, sumaDeuda = 0;
 
@@ -274,11 +272,9 @@ export default function GestionEstudiantil() {
       ["Total Deuda", `$${sumaDeuda.toLocaleString('es-CO')}`]
     ];
 
-    // ===== 3️⃣ Crear libro Excel =====
     const worksheetData = XLSX.utils.json_to_sheet(data);
     const resumenSheet = XLSX.utils.aoa_to_sheet(resumen);
 
-    // Ajustar anchos de columnas
     worksheetData['!cols'] = Object.keys(data[0]).map(key => ({
       wch: Math.max(key.length, ...data.map(d => String(d[key]).length)) + 2
     }));
@@ -288,7 +284,6 @@ export default function GestionEstudiantil() {
     XLSX.utils.book_append_sheet(workbook, worksheetData, 'Estudiantes');
     XLSX.utils.book_append_sheet(workbook, resumenSheet, 'Resumen');
 
-    // Guardar
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(blob, `Reporte_Estudiantes_${new Date().toLocaleDateString('es-CO')}.xlsx`);
