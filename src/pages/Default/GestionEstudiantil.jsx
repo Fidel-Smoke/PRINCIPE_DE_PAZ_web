@@ -339,7 +339,7 @@ export default function GestionEstudiantil() {
 
             <div className="mt-4 d-flex justify-content-between align-items-center">
               <div>
-                {form.id ? <span className="badge bg-info">Editando ID: {form.id}</span> : null}
+                {form.id ? <span className="badge bg-info">Editando a: {form.nombre_estudiante} ({form.documento_estudiante})</span> : null}
               </div>
               <div>
                 <button type="submit" className="btn btn-primary me-2">{form.id ? 'Actualizar' : 'Registrar'}</button>
@@ -440,7 +440,7 @@ export default function GestionEstudiantil() {
                           <div className="col">
                             <div className="metric-card p-2 text-center">
                               <small className="d-block">Seguro</small>
-                              {pagoSeguro ? <strong>${Number(valorSeguro).toLocaleString('es-CO')}</strong> : <span className="bg-danger badge text-white">No optó</span>}
+                              {pagoSeguro ? <strong>${Number(valorSeguro).toLocaleString('es-CO')}</strong> : <span className="bg-warning badge text-white">No optó</span>}
                             </div>
                           </div>
                           <div className="col">
