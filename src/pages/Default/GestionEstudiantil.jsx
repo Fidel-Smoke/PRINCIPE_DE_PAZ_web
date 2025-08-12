@@ -211,13 +211,95 @@ export default function GestionEstudiantil() {
   };
 
   const exportarExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(estudiantes);
+    if (estudiantes.length === 0) {
+      Swal.fire("Sin datos", "No hay estudiantes para exportar.", "warning");
+      return;
+    }
+
+    // ===== 1️⃣ Preparar datos detallados =====
+    const data = estudiantes.map(est => {
+      let meses = [];
+      try { meses = JSON.parse(est.meses_pagados || '[]'); } catch { }
+      const total = Number(est.valor_matricula || 0) + Number(est.valor_pension || 0) * meses.length +
+        Number(est.valor_carne || 0) + Number(est.valor_agenda || 0) + Number(est.valor_seguro || 0);
+      const deuda = Number(est.valor_esperado || 0) - total;
+
+      return {
+        "Nombre Estudiante": est.nombre_estudiante,
+        "Documento Estudiante": est.documento_estudiante,
+        "Curso": est.curso,
+        "Nombre Acudiente": est.nombre_acudiente,
+        "Documento Acudiente": est.documento_acudiente,
+        "Meses Pagados": meses.join(", "),
+        "Valor Matrícula": `$${Number(est.valor_matricula || 0).toLocaleString('es-CO')}`,
+        "Valor Pensión": `$${Number(est.valor_pension || 0).toLocaleString('es-CO')}`,
+        "Carnet": est.valor_carne > 0 ? "Pagado" : "Debe",
+        "Agenda": est.valor_agenda > 0 ? "Pagada" : "Debe",
+        "Seguro": est.valor_seguro > 0 ? "Pagado" : "No optó",
+        "Total Pagado": `$${total.toLocaleString('es-CO')}`,
+        "Deuda": `$${deuda.toLocaleString('es-CO')}`,
+        "Referencia de Pago": est.referencia_pago || "",
+        "R.C.": est.recibo_caja || "",
+        "Observaciones": est.observaciones || ""
+      };
+    });
+
+    // ===== 2️⃣ Crear hoja de resumen =====
+    const totalEstudiantes = estudiantes.length;
+    let totalAlDia = 0, totalConDeuda = 0, sumaPagada = 0, sumaDeuda = 0;
+
+    estudiantes.forEach(est => {
+      let meses = [];
+      try { meses = JSON.parse(est.meses_pagados || '[]'); } catch { }
+      const total = Number(est.valor_matricula || 0) + Number(est.valor_pension || 0) * meses.length +
+        Number(est.valor_carne || 0) + Number(est.valor_agenda || 0) + Number(est.valor_seguro || 0);
+      const deuda = Number(est.valor_esperado || 0) - total;
+
+      if (deuda <= 0) totalAlDia++;
+      else totalConDeuda++;
+
+      sumaPagada += total;
+      sumaDeuda += deuda > 0 ? deuda : 0;
+    });
+
+    const resumen = [
+      ["Reporte de Gestión Estudiantil", ""],
+      ["Fecha de Generación", new Date().toLocaleString('es-CO')],
+      ["Total de Estudiantes", totalEstudiantes],
+      ["Estudiantes al Día", totalAlDia],
+      ["Estudiantes con Deuda", totalConDeuda],
+      ["% Al Día", ((totalAlDia / totalEstudiantes) * 100).toFixed(2) + "%"],
+      ["% Con Deuda", ((totalConDeuda / totalEstudiantes) * 100).toFixed(2) + "%"],
+      ["Total Pagado", `$${sumaPagada.toLocaleString('es-CO')}`],
+      ["Total Deuda", `$${sumaDeuda.toLocaleString('es-CO')}`]
+    ];
+
+    // ===== 3️⃣ Crear libro Excel =====
+    const worksheetData = XLSX.utils.json_to_sheet(data);
+    const resumenSheet = XLSX.utils.aoa_to_sheet(resumen);
+
+    // Ajustar anchos de columnas
+    worksheetData['!cols'] = Object.keys(data[0]).map(key => ({
+      wch: Math.max(key.length, ...data.map(d => String(d[key]).length)) + 2
+    }));
+    resumenSheet['!cols'] = [{ wch: 30 }, { wch: 20 }];
+
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Estudiantes');
+    XLSX.utils.book_append_sheet(workbook, worksheetData, 'Estudiantes');
+    XLSX.utils.book_append_sheet(workbook, resumenSheet, 'Resumen');
+
+    // Guardar
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(blob, 'estudiantes.xlsx');
-    Swal.fire({ icon: 'success', title: 'Exportado correctamente', text: 'El archivo Excel ha sido generado.', timer: 2000, showConfirmButton: false });
+    saveAs(blob, `Reporte_Estudiantes_${new Date().toLocaleDateString('es-CO')}.xlsx`);
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Exportado correctamente',
+      text: 'El archivo Excel con el resumen ha sido generado.',
+      timer: 2500,
+      showConfirmButton: false
+    });
   };
 
   return (
