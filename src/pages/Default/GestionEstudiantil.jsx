@@ -9,10 +9,11 @@ export default function GestionEstudiantil() {
   const [estudiantes, setEstudiantes] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const estudiantesFiltrados = estudiantes.filter(est =>
-    est.nombre_estudiante.toLowerCase().includes(busqueda.toLowerCase()) ||
-    String(est.documento_estudiante).toLowerCase().includes(busqueda.toLowerCase()) ||
-    est.curso.toLowerCase().includes(busqueda.toLowerCase())
+    (est.nombre_estudiante || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+    String(est.documento_estudiante || '').toLowerCase().includes(busqueda.toLowerCase()) ||
+    (est.curso || '').toLowerCase().includes(busqueda.toLowerCase())
   );
+
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [form, setForm] = useState({
     nombre_estudiante: '',
@@ -30,6 +31,7 @@ export default function GestionEstudiantil() {
     incluye_agenda: true,
     incluye_seguro: true
   });
+
   const formRef = useRef(null);
   const listaRef = useRef(null);
 
@@ -58,8 +60,13 @@ export default function GestionEstudiantil() {
   ];
 
   const cargarEstudiantes = async () => {
-    const res = await API.get('/traerEstudiante');
-    setEstudiantes(res.data);
+    try {
+      const res = await API.get('/traerEstudiante');
+      setEstudiantes(res.data || []);
+    } catch (err) {
+      console.error(err);
+      setEstudiantes([]);
+    }
   };
 
   useEffect(() => { cargarEstudiantes(); }, []);
@@ -89,7 +96,7 @@ export default function GestionEstudiantil() {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    const cursoRaw = form.curso.trim().toUpperCase();
+    const cursoRaw = (form.curso || '').trim().toUpperCase();
     let grado = 'TR';
     const match = cursoRaw.match(/^\d{1,2}/);
     if (match) {
@@ -106,8 +113,8 @@ export default function GestionEstudiantil() {
     const valor_agenda = form.incluye_agenda ? AGENDA : 0;
     const valor_seguro = form.incluye_seguro ? SEGURO : 0;
 
-    const totalPagado = costosBase.matricula + pensionFinal * form.meses_pagados.length;
-    const valorEsperado = costosBase.matricula + pensionFinal * 10 + valor_carne + valor_agenda + valor_seguro;
+    const totalPagado = Number(costosBase.matricula) + Number(pensionFinal) * (form.meses_pagados?.length || 0);
+    const valorEsperado = Number(costosBase.matricula) + Number(pensionFinal) * 10 + valor_carne + valor_agenda + valor_seguro;
 
     const data = {
       ...form,
@@ -134,24 +141,17 @@ export default function GestionEstudiantil() {
       return;
     }
 
-    if (form.id) {
-      await API.put(`/actualizarEstudiante/${form.id}`, data);
-      Swal.fire({
-        icon: 'success',
-        title: 'Estudiante actualizado',
-        timer: 2000,
-        timerProgressBar: true,
-        showConfirmButton: false
-      });
-    } else {
-      await API.post('/crearEstudiante', data);
-      Swal.fire({
-        icon: 'success',
-        title: 'Estudiante registrado',
-        timer: 2000,
-        timerProgressBar: true,
-        showConfirmButton: false
-      });
+    try {
+      if (form.id) {
+        await API.put(`/actualizarEstudiante/${form.id}`, data);
+        Swal.fire({ icon: 'success', title: 'Estudiante actualizado', timer: 2000, showConfirmButton: false });
+      } else {
+        await API.post('/crearEstudiante', data);
+        Swal.fire({ icon: 'success', title: 'Estudiante registrado', timer: 2000, showConfirmButton: false });
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Ocurrió un error al guardar.", "error");
     }
 
     setForm({
@@ -159,8 +159,7 @@ export default function GestionEstudiantil() {
       observaciones: '', referencia_pago: '', recibo_caja: '', meses_pagados: [], es_docente: false,
       descuento_pension: 0, incluye_carne: true, incluye_agenda: true, incluye_seguro: true
     });
-    cargarEstudiantes();
-
+    await cargarEstudiantes();
     if (listaRef.current) {
       listaRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -169,7 +168,9 @@ export default function GestionEstudiantil() {
   const editar = est => {
     setForm({
       ...est,
-      meses_pagados: JSON.parse(est.meses_pagados || '[]'),
+      meses_pagados: (() => {
+        try { return JSON.parse(est.meses_pagados || '[]'); } catch { return []; }
+      })(),
       es_docente: !!est.es_docente,
       descuento_pension: parseFloat(est.descuento_pension || 0),
       recibo_caja: est.recibo_caja || '',
@@ -183,9 +184,7 @@ export default function GestionEstudiantil() {
         est.seguro === 1 || est.seguro === true || est.seguro === "1" ||
         est.incluye_seguro === true || est.incluye_seguro === 1 || est.incluye_seguro === "1"
     });
-
     setMostrarFormulario(true);
-
     window.scrollTo(0, 0);
   };
 
@@ -200,15 +199,14 @@ export default function GestionEstudiantil() {
     });
 
     if (result.isConfirmed) {
-      await API.delete(`/eliminarEstudiante/${id}`);
-      cargarEstudiantes();
-      Swal.fire({
-        icon: 'success',
-        title: 'Estudiante eliminado',
-        timer: 2000,
-        timerProgressBar: true,
-        showConfirmButton: false
-      });
+      try {
+        await API.delete(`/eliminarEstudiante/${id}`);
+        cargarEstudiantes();
+        Swal.fire({ icon: 'success', title: 'Estudiante eliminado', timer: 2000, showConfirmButton: false });
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Error", "No se pudo eliminar.", "error");
+      }
     }
   };
 
@@ -219,28 +217,45 @@ export default function GestionEstudiantil() {
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(blob, 'estudiantes.xlsx');
-    Swal.fire({
-      icon: 'success',
-      title: 'Exportado correctamente',
-      text: 'El archivo Excel ha sido generado.',
-      timer: 2000,
-      timerProgressBar: true,
-      showConfirmButton: false
-    });
+    Swal.fire({ icon: 'success', title: 'Exportado correctamente', text: 'El archivo Excel ha sido generado.', timer: 2000, showConfirmButton: false });
   };
 
   return (
     <div className="container py-4">
       <NavbarCrud />
-      <div className="mt-5 pt-5">
+      <div className="mt-5 pt-4">
+
+        <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-4 mt-4">
+          <input
+            type="text"
+            className="form-control search-input"
+            placeholder="🔍 Buscar por nombre, documento, curso..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+
+          <div className="d-flex flex-wrap gap-2">
+            <button type="button" className="btn btn-success" onClick={exportarExcel}>
+              📤 Exportar A Excel
+            </button>
+
+            <button
+              className={`btn ${mostrarFormulario ? 'btn-outline-light' : 'btn-primary'}`}
+              onClick={() => setMostrarFormulario(!mostrarFormulario)}
+            >
+              {mostrarFormulario ? "Cerrar Registro" : "Registrar Estudiante"}
+            </button>
+          </div>
+        </div>
 
         {mostrarFormulario && (
-          <form ref={formRef} onSubmit={handleSubmit} className="card p-4 shadow-sm mb-5">
-            <h2 className="text-center text-black fw-bold mb-4 fs-1">
-              📘 Gestión De Estudiantes - Colegio Príncipe de Paz
-            </h2>
+          <form ref={formRef} onSubmit={handleSubmit} className="card p-4 mb-4 form-modern shadow-sm">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h3 className="mb-0">📘 Gestión De Estudiantes</h3>
+              <small className="text-muted">Colegio Príncipe de Paz</small>
+            </div>
 
-            <div className="row g-3 mt-2">
+            <div className="row g-3">
               {[
                 ['nombre_estudiante', 'Nombre estudiante'],
                 ['documento_estudiante', 'Documento'],
@@ -262,63 +277,37 @@ export default function GestionEstudiantil() {
                 </div>
               ))}
 
-              <div className="d-flex flex-wrap gap-3 align-items-center">
-                <div>
-                  <label className="form-label mb-0">Descuento pensión (%)</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={form.descuento_pension}
-                    name="descuento_pension"
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="d-flex flex-wrap gap-3 mt-3">
-                  <label className="form-check mb-0">
-                    <input
-                      className="form-check-input me-1"
-                      type="checkbox"
-                      name="es_docente"
-                      checked={form.es_docente}
-                      onChange={handleChange}
-                    />
-                    Docente
-                  </label>
-                  <label className="form-check mb-0">
-                    <input
-                      className="form-check-input me-1"
-                      type="checkbox"
-                      name="incluye_carne"
-                      checked={form.incluye_carne}
-                      onChange={handleChange}
-                    />
-                    Incluir Carnet
-                  </label>
-                  <label className="form-check mb-0">
-                    <input
-                      className="form-check-input me-1"
-                      type="checkbox"
-                      name="incluye_agenda"
-                      checked={form.incluye_agenda}
-                      onChange={handleChange}
-                    />
-                    Incluir Agenda
-                  </label>
-                  <label className="form-check mb-0">
-                    <input
-                      className="form-check-input me-1"
-                      type="checkbox"
-                      name="incluye_seguro"
-                      checked={form.incluye_seguro}
-                      onChange={handleChange}
-                    />
-                    Incluir Seguro
-                  </label>
-                </div>
+              <div className="col-12 col-md-4">
+                <label className="form-label mb-1">Descuento pensión (%)</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={form.descuento_pension}
+                  name="descuento_pension"
+                  onChange={handleChange}
+                />
               </div>
 
-              <div className="col-12 mt-4">
+              <div className="col-12 col-md-8 d-flex align-items-center gap-3 flex-wrap">
+                <label className="form-check mb-0">
+                  <input className="form-check-input me-1" type="checkbox" name="es_docente" checked={form.es_docente} onChange={handleChange} />
+                  Docente
+                </label>
+                <label className="form-check mb-0">
+                  <input className="form-check-input me-1" type="checkbox" name="incluye_carne" checked={form.incluye_carne} onChange={handleChange} />
+                  Incluir Carnet
+                </label>
+                <label className="form-check mb-0">
+                  <input className="form-check-input me-1" type="checkbox" name="incluye_agenda" checked={form.incluye_agenda} onChange={handleChange} />
+                  Incluir Agenda
+                </label>
+                <label className="form-check mb-0">
+                  <input className="form-check-input me-1" type="checkbox" name="incluye_seguro" checked={form.incluye_seguro} onChange={handleChange} />
+                  Incluir Seguro
+                </label>
+              </div>
+
+              <div className="col-12">
                 <label className="form-label">Selecciona los meses pagados:</label>
                 <div className="row">
                   {mesesDelAno.map(mes => (
@@ -348,214 +337,193 @@ export default function GestionEstudiantil() {
               </div>
             </div>
 
-            <div className="mt-4 d-flex flex-wrap gap-2 justify-content-between">
-              <button type="submit" className="btn btn-primary">
-                {form.id ? 'Actualizar' : 'Registrar'}
-              </button>
+            <div className="mt-4 d-flex justify-content-between align-items-center">
+              <div>
+                {form.id ? <span className="badge bg-info">Editando ID: {form.id}</span> : null}
+              </div>
+              <div>
+                <button type="submit" className="btn btn-primary me-2">{form.id ? 'Actualizar' : 'Registrar'}</button>
+                <button type="button" className="btn btn-outline-secondary" onClick={() => {
+                  setMostrarFormulario(false);
+                  setForm({
+                    nombre_estudiante: '', documento_estudiante: '', curso: '', nombre_acudiente: '', documento_acudiente: '',
+                    observaciones: '', referencia_pago: '', recibo_caja: '', meses_pagados: [], es_docente: false,
+                    descuento_pension: 0, incluye_carne: true, incluye_agenda: true, incluye_seguro: true
+                  });
+                }}>Cancelar</button>
+              </div>
             </div>
           </form>
         )}
 
-        <div ref={listaRef} className="container py-3 mt-5">
-          <h2 className="text-center text-white fw-bold mb-4 display-5">
-            🎓 Estudiantes Registrados
-          </h2>
-
-          <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-4 mt-5">
-            <input
-              type="text"
-              className="form-control w-100 w-md-50"
-              placeholder="🔍 Buscar por nombre, documento, curso..."
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-            />
-
-            <div className="d-flex flex-wrap gap-2 w-100">
-              <button
-                type="button"
-                className="btn btn-success text-white"
-                onClick={exportarExcel}
-              >
-                📤 Exportar A Excel
-              </button>
-
-              <div className="ms-auto">
-                <button
-                  className="btn btn border-light text-white mi-tarjeta2"
-                  onClick={() => setMostrarFormulario(!mostrarFormulario)}
-                >
-                  {mostrarFormulario ? "Cerrar Registro" : "Registrar Estudiante"}
-                </button>
-              </div>
-            </div>
-          </div>
+        <div ref={listaRef} className="mt-5 pt-5">
+          <h2 className="text-center mb-4 text-white display-5 fw-bold">🎓 Estudiantes Registrados</h2>
 
           {estudiantesFiltrados.length === 0 ? (
-            <div className="alert alert-warning text-center">
-              No hay resultados para esa búsqueda.
-            </div>
+            <div className="alert alert-warning text-center">No hay resultados para esa búsqueda.</div>
           ) : (
             estudiantesFiltrados.map(est => {
               let meses = [];
-              try {
-                meses = JSON.parse(est.meses_pagados || '[]');
-              } catch { }
+              try { meses = JSON.parse(est.meses_pagados || '[]'); } catch { meses = []; }
               meses = meses.filter(m => typeof m === 'string' && m.trim() !== '');
 
-              const total = parseInt(est.valor_matricula || 0) +
-                parseInt(est.valor_pension || 0) * meses.length +
-                parseInt(est.valor_carne || 0) +
-                parseInt(est.valor_agenda || 0) +
-                parseInt(est.valor_seguro || 0);
+              const valorMatricula = Number(est.valor_matricula || 0);
+              const valorPension = Number(est.valor_pension || 0);
+              const valorCarne = Number(est.valor_carne || 0);
+              const valorAgenda = Number(est.valor_agenda || 0);
+              const valorSeguro = Number(est.valor_seguro || 0);
+              const total = valorMatricula + valorPension * meses.length + valorCarne + valorAgenda + valorSeguro;
+              const valorEsperado = Number(est.valor_esperado || 0);
+              const deuda = valorEsperado - total;
 
-              const deuda = parseInt(est.valor_esperado || 0) - total;
-
-              const pagoMatricula = parseInt(est.valor_matricula || 0) > 0;
+              const pagoMatricula = valorMatricula > 0;
               const pagoPensiones = meses.length > 0;
+              const pagoCarnet = valorCarne > 0;
+              const pagoAgenda = valorAgenda > 0;
+              const pagoSeguro = valorSeguro > 0;
 
               const mesesPagadosSet = new Set(meses);
               const mesesFaltantes = mesesDelAno.filter(m => !mesesPagadosSet.has(m));
               const todosFaltan = meses.length === 0;
               const ningunoFalta = mesesFaltantes.length === 0;
 
+              const isDocente = est.es_docente === 1 || est.es_docente === "1" || est.es_docente === true;
+
+              const percentPaid = valorEsperado > 0 ? Math.round((total / valorEsperado) * 100) : 0;
+
               return (
-                <div key={est.id} className={`card shadow-sm mb-4 border-${deuda > 0 ? 'danger' : 'success'}`}>
+                <div key={est.id} className={`card mb-4 mt-5 student-card border-${deuda > 0 ? 'danger' : 'success'}`}>
+                  <div className="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 className="mb-0">{est.nombre_estudiante} <small className="badge bg-light text-dark ms-2">{est.curso || '-'}</small></h5>
+                      <small className="text-white">Doc: {est.documento_estudiante || '-'}</small>
+                    </div>
+                    <div className="d-flex align-items-center gap-2">
+                      <div className="small text-white">ID: {est.id || '-'}</div>
+                    </div>
+                  </div>
+
                   <div className="card-body">
-                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2">
-                      <div>
-                        <div className="d-flex align-items-center me-3">
-                          <div className="mt-2 ">
-                            <h5 className="fw-bold">Estudiante: {est.nombre_estudiante}</h5>
-                          </div>
-
-                          {(est.es_docente === 1 || est.es_docente === "1" || est.es_docente === true) && (
-                            <span className="badge bg-info ms-3">👨‍🏫 Hijo De Trabajador</span>
-                          )}
-                        </div>
-
-
-
-                        <div className="text-muted" style={{ fontSize: '0.95em' }}>
-                          <span className="me-3"><strong>Doc. Estudiante:</strong> {est.documento_estudiante}</span>
-                          <span className="me-3"><strong>Curso:</strong> {est.curso}</span>
-
-                        </div>
-                      </div>
-
-                    </div>
-                    <div className="mt-2 ">
-                      <h5 className="fw-bold">Acudiente: {est.nombre_acudiente}</h5>
-                    </div>
-                    <span className=" text-muted"><strong>Doc. Acudiente:</strong> {est.documento_acudiente}</span>
-                    <span className='ms-4 text-muted'>
-                      <strong>Referencia:</strong>
-                      {est.referencia_pago
-                        ? <span className="badge text-dark ms-1">{est.referencia_pago}</span>
-                        : <span className="text-muted ms-1">-</span>
-                      }
-                    </span>
-                    <span className='ms-4 text-muted'>
-                      <strong>Recibo_caja:</strong>
-                      {est.referencia_pago
-                        ? <span className="badge text-dark ms-1">{est.recibo_caja}</span>
-                        : <span className="text-muted ms-1">-</span>
-                      }
-                    </span>
-
-                    <div className="row row-cols-2 row-cols-md-3 row-cols-lg-6 text-center mt-4">
-                      <div>
-                        <small>Matrícula:</small><br />
-                        <strong>${parseInt(est.valor_matricula).toLocaleString('es-CO')}</strong>
-                      </div>
-                      <div>
-                        <small>Pensión:</small><br />
-                        <strong>${parseInt(est.valor_pension).toLocaleString('es-CO')}</strong>
-                        {parseFloat(est.descuento_pension) > 0 && (
-                          <div>
-                            <span className="badge bg-info mt-1">
-                              Descuento: {parseFloat(est.descuento_pension)}%
-                            </span>
-                            <br />
-                            <span className="text-muted" style={{ fontSize: '0.85em' }}>
-                              Pensión con descuento
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <small>Carnet:</small><br />
-                        <strong>
-                          {parseInt(est.valor_carne) > 0
-                            ? `$${parseInt(est.valor_carne).toLocaleString('es-CO')}`
-                            : <span className="badge bg-danger text-white">Debe Carnet</span>
-                          }
-                        </strong>
-                      </div>
-                      <div>
-                        <small>Agenda:</small><br />
-                        <strong>
-                          {parseInt(est.valor_agenda) > 0
-                            ? `$${parseInt(est.valor_agenda).toLocaleString('es-CO')}`
-                            : <span className="badge bg-danger text-white">Debe Agenda</span>
-                          }
-                        </strong>
-                      </div>
-                      <div>
-                        <small>Seguro:</small><br />
-                        <strong>
-                          {parseInt(est.valor_seguro) > 0
-                            ? `$${parseInt(est.valor_seguro).toLocaleString('es-CO')}`
-                            : null
-                          }
-                        </strong>
-                        {parseInt(est.valor_seguro) === 0 && (
-                          <div className="alert alert-warning mt-2 p-2" style={{ fontSize: '0.9em' }}>
-                            ⚠️ Este estudiante <strong>no optó por el seguro estudiantil</strong>.
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <small>Meses pagados:</small><br />
-                        {meses.length > 0
-                          ? meses.map((m, i) => <span key={i} className="badge bg-secondary me-1">{m}</span>)
-                          : '-'}
-                      </div>
-                    </div>
-
-                    <div className="mt-3">
-                      <small className="text-muted">Meses que faltan por pagar:</small><br />
-                      {deuda === 0
-                        ? <span className="badge bg-success">Al día</span>
-                        : ningunoFalta
-                          ? <span className="badge bg-success">No debe meses</span>
-                          : todosFaltan
-                            ? mesesDelAno.map((m, i) => <span key={i} className="badge bg-danger me-1">{m}</span>)
-                            : mesesFaltantes.map((m, i) => <span key={i} className="badge bg-danger me-1">{m}</span>)
-                      }
-                    </div>
-
-                    <div className="mt-3">
-                      <small className="text-muted">Pagos realizados:</small><br />
-                      {pagoMatricula && <span className="badge bg-success me-1">✔ Matrícula</span>}
-                      {est.valor_carne > 0 && <span className="badge bg-success me-1">✔ Carnet</span>}
-                      {est.valor_agenda > 0 && <span className="badge bg-success me-1">✔ Agenda</span>}
-                      {est.valor_seguro > 0 && <span className="badge bg-success me-1">✔ Seguro</span>}
-                      {pagoPensiones && <span className="badge bg-primary me-1">✔ Pensiones</span>}
-                      {!pagoMatricula && !pagoPensiones && <span className="badge bg-warning text-dark">⚠️ Sin pagos registrados</span>}
-                    </div>
-
-                    <hr />
                     <div className="row">
-                      <div className="col-md-4"><strong>Total Pagado:</strong> <span className="text-success">${total.toLocaleString('es-CO')}</span></div>
-                      <div className="col-md-4"><strong>Deuda:</strong> <span className={deuda > 0 ? 'text-danger fw-bold' : 'text-success'}>${deuda.toLocaleString('es-CO')}</span></div>
-                      <div className="col-md-4 text-end">
-                        <button className="btn btn-warning btn-sm me-2" onClick={() => editar(est)}>✏️</button>
-                        <button className="btn btn-danger btn-sm" onClick={() => eliminar(est.id)}>🗑️</button>
-                      </div>
-                    </div>
+                      <div className="col-md-7">
+                        <div className="mb-3"><strong>Acudiente:</strong> {est.nombre_acudiente || '-'} <span className="text-muted ms-2">Doc: {est.documento_acudiente || '-'}</span></div>
 
-                    <div className="mt-2 text-muted">
-                      <small><strong>ID:</strong> {est.id || '-'} | <strong>Obs:</strong> {est.observaciones || 'Sin Observaciones'}</small>
+                        <div className="row row-cols-2 row-cols-md-3 g-3 mb-3 metrics-row">
+                          <div className="col">
+                            <div className="metric-card p-2 text-center">
+                              <small className="d-block">Matrícula</small>
+                              <strong>${Number(valorMatricula).toLocaleString('es-CO')}</strong>
+                            </div>
+                          </div>
+                          <div className="col">
+                            <div className="metric-card p-2 text-center">
+                              <small className="d-block">Pensión</small>
+                              <strong>${Number(valorPension).toLocaleString('es-CO')}</strong>
+                              {parseFloat(est.descuento_pension) > 0 && (
+                                <div><span className="badge bg-info mt-1">Descuento {parseFloat(est.descuento_pension)}%</span></div>
+                              )}
+                              {isDocente && <span className="badge bg-info text-white">👨‍🏫 Hijo De Trabajador</span>}
+                            </div>
+                          </div>
+                          <div className="col">
+                            <div className="metric-card p-2 text-center">
+                              <small className="d-block">Carnet</small>
+                              {pagoCarnet ? <strong>${Number(valorCarne).toLocaleString('es-CO')}</strong> : <span className="badge bg-danger">Debe Carnet</span>}
+                            </div>
+                          </div>
+                          <div className="col">
+                            <div className="metric-card p-2 text-center">
+                              <small className="d-block">Agenda</small>
+                              {pagoAgenda ? <strong>${Number(valorAgenda).toLocaleString('es-CO')}</strong> : <span className="badge bg-danger">Debe Agenda</span>}
+                            </div>
+                          </div>
+                          <div className="col">
+                            <div className="metric-card p-2 text-center">
+                              <small className="d-block">Seguro</small>
+                              {pagoSeguro ? <strong>${Number(valorSeguro).toLocaleString('es-CO')}</strong> : <span className="bg-danger badge text-white">No optó</span>}
+                            </div>
+                          </div>
+                          <div className="col">
+                            <div className="metric-card p-2 text-center">
+                              <small className="d-block">Meses pagados</small>
+                              {meses.length > 0 ? meses.map((m, i) => <span key={i} className="badge bg-secondary me-1 mb-1">{m}</span>) : '-'}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mb-3">
+                          <small className="text-muted">Meses que faltan por pagar:</small><br />
+                          {valorEsperado === 0
+                            ? <span className="badge bg-secondary">Sin valor esperado</span>
+                            : deuda === 0
+                              ? <span className="badge bg-success">Al día</span>
+                              : ningunoFalta
+                                ? <span className="badge bg-success">No debe meses</span>
+                                : todosFaltan
+                                  ? mesesDelAno.map((m, i) => <span key={i} className="badge bg-danger me-1">{m}</span>)
+                                  : mesesFaltantes.map((m, i) => <span key={i} className="badge bg-danger me-1">{m}</span>)
+                          }
+                        </div>
+
+                        <div>
+                          <small className="text-muted">Pagos realizados:</small><br />
+                          {pagoMatricula && <span className="badge bg-success me-1">✔ Matrícula</span>}
+                          {pagoCarnet && <span className="badge bg-success me-1">✔ Carnet</span>}
+                          {pagoAgenda && <span className="badge bg-success me-1">✔ Agenda</span>}
+                          {pagoSeguro && <span className="badge bg-success me-1">✔ Seguro</span>}
+                          {pagoPensiones && <span className="badge bg-primary me-1">✔ Pensiones</span>}
+                          {!pagoMatricula && !pagoPensiones && <span className="badge bg-warning text-dark">⚠️ Sin pagos registrados</span>}
+                        </div>
+                      </div>
+
+                      <div className="col-md-5">
+                        <div className="totals-card p-3 mb-3">
+                          <div className="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                              <small className="text-muted d-block">Total Pagado</small>
+                              <div className="h5 text-success mb-0">${total.toLocaleString('es-CO')}</div>
+                            </div>
+                            <div>
+                              <small className="text-muted d-block">Deuda</small>
+                              <div className={`h5 mb-0 ${deuda > 0 ? 'text-danger fw-bold' : 'text-success'}`}>${deuda.toLocaleString('es-CO')}</div>
+                            </div>
+                          </div>
+
+                          <div className="mb-2">
+                            <small className="text-muted">Progreso de pago</small>
+                            <div className="progress progress-animated" style={{ height: '20px' }}>
+                              <div
+                                className={`progress-bar d-flex align-items-center justify-content-center fw-bold ${percentPaid < 20
+                                  ? 'bg-danger'
+                                  : percentPaid < 80
+                                    ? 'bg-info'
+                                    : 'bg-success'
+                                  }`}
+                                role="progressbar"
+                                style={{
+                                  width: `${Math.min(percentPaid, 100)}%`,
+                                  transition: 'width 0.8s ease-in-out'
+                                }}
+                                aria-valuenow={percentPaid}
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                              >
+                                {percentPaid}%
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="d-flex gap-2 justify-content-end mt-3">
+                            <button className="btn btn-warning btn-action" onClick={() => editar(est)} title="Editar">✏️</button>
+                            <button className="btn btn-danger btn-action" onClick={() => eliminar(est.id)} title="Eliminar">🗑️</button>
+                          </div>
+                        </div>
+
+                        <div className="text-muted small"><strong>Referencia:</strong> {est.referencia_pago || '-'}<br />
+                          <strong>R.C.:</strong> {est.recibo_caja || '-'}<br />
+                          <strong>Obs:</strong> {est.observaciones || 'Sin Observaciones'}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
