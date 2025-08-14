@@ -364,7 +364,6 @@ export default function GestionEstudiantil() {
                   onChange={handleChange}
                 />
 
-                {/* Mostrar solo si hay curso y descuento */}
                 {form.curso && parseFloat(form.descuento_pension) > 0 && (() => {
                   const cursoRaw = (form.curso || '').trim().toUpperCase();
                   let grado = 'TR';
@@ -380,7 +379,6 @@ export default function GestionEstudiantil() {
                   const descuentoPesos = costosBase.pension * descuentoDecimal;
                   const pensionFinal = costosBase.pension - descuentoPesos;
 
-                  // Color dinámico para el texto según descuento
                   const colorDescuento = parseFloat(form.descuento_pension) > 50 ? "text-danger" : "text-muted";
                   const colorFinal = parseFloat(form.descuento_pension) > 50 ? "text-danger fw-bold" : "text-success";
 
