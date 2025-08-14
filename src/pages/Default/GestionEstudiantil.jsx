@@ -363,6 +363,38 @@ export default function GestionEstudiantil() {
                   name="descuento_pension"
                   onChange={handleChange}
                 />
+
+                {/* Mostrar solo si hay curso y descuento */}
+                {form.curso && parseFloat(form.descuento_pension) > 0 && (() => {
+                  const cursoRaw = (form.curso || '').trim().toUpperCase();
+                  let grado = 'TR';
+                  const match = cursoRaw.match(/^\d{1,2}/);
+                  if (match) {
+                    grado = match[0];
+                  } else if (cursoRaw === 'TR') {
+                    grado = 'TR';
+                  }
+                  const costosBase = COSTOS_2025[grado] || { pension: 0 };
+
+                  const descuentoDecimal = parseFloat(form.descuento_pension) / 100;
+                  const descuentoPesos = costosBase.pension * descuentoDecimal;
+                  const pensionFinal = costosBase.pension - descuentoPesos;
+
+                  // Color dinámico para el texto según descuento
+                  const colorDescuento = parseFloat(form.descuento_pension) > 50 ? "text-danger" : "text-muted";
+                  const colorFinal = parseFloat(form.descuento_pension) > 50 ? "text-danger fw-bold" : "text-success";
+
+                  return (
+                    <div className="mt-1">
+                      <small className={`${colorDescuento} d-block`}>
+                        💰 Se descontarán: ${descuentoPesos.toLocaleString('es-CO')}
+                      </small>
+                      <small className={`${colorFinal} d-block`}>
+                        📉 Pensión final: ${pensionFinal.toLocaleString('es-CO')}
+                      </small>
+                    </div>
+                  );
+                })()}
               </div>
 
               <div className="col-12 col-md-8 d-flex align-items-center gap-3 flex-wrap">
