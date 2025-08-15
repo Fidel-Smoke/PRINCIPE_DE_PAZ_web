@@ -142,7 +142,6 @@ export default function GestionEstudiantil() {
     }
 
     try {
-      // Función para validar documento
       const validarDocumento = (valor, tipo) => {
         if (!/^\d+$/.test(valor) || valor.length < 8 || valor.length > 10) {
           Swal.fire({
@@ -157,11 +156,9 @@ export default function GestionEstudiantil() {
         return true;
       };
 
-      // Validaciones
       if (!validarDocumento(form.documento_estudiante, "estudiante")) return;
       if (!validarDocumento(form.documento_acudiente, "acudiente")) return;
 
-      // Guardar o actualizar estudiante
       if (form.id) {
         await API.put(`/actualizarEstudiante/${form.id}`, data);
         Swal.fire({ icon: 'success', title: 'Estudiante actualizado', timer: 2000, showConfirmButton: false });
