@@ -142,18 +142,26 @@ export default function GestionEstudiantil() {
     }
 
     try {
-      if (!/^\d+$/.test(form.documento_acudiente) || form.documento_acudiente.length < 8 || form.documento_acudiente.length > 10) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Documento inválido',
-          text: 'El número de documento debe tener entre 8 y 10 dígitos numéricos',
-          timer: 3000,
-          showConfirmButton: true
-        });
-        return;
+      // Función para validar documento
+      const validarDocumento = (valor, tipo) => {
+        if (!/^\d+$/.test(valor) || valor.length < 8 || valor.length > 10) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Documento inválido',
+            text: `El número de documento del ${tipo} debe tener entre 8 y 10 dígitos numéricos`,
+            timer: 9000,
+            showConfirmButton: true
+          });
+          return false;
+        }
+        return true;
+      };
 
-      }
+      // Validaciones
+      if (!validarDocumento(form.documento_estudiante, "estudiante")) return;
+      if (!validarDocumento(form.documento_acudiente, "acudiente")) return;
 
+      // Guardar o actualizar estudiante
       if (form.id) {
         await API.put(`/actualizarEstudiante/${form.id}`, data);
         Swal.fire({ icon: 'success', title: 'Estudiante actualizado', timer: 2000, showConfirmButton: false });
@@ -166,6 +174,7 @@ export default function GestionEstudiantil() {
       console.error(err);
       Swal.fire("Error", "Ocurrió un error al guardar.", "error");
     }
+
 
     setForm({
       nombre_estudiante: '', documento_estudiante: '', curso: '', nombre_acudiente: '', documento_acudiente: '',
