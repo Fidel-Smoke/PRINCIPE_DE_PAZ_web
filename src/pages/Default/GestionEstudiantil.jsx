@@ -142,6 +142,18 @@ export default function GestionEstudiantil() {
     }
 
     try {
+      if (!/^\d+$/.test(form.documento_acudiente) || form.documento_acudiente.length < 8 || form.documento_acudiente.length > 10) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Documento inválido',
+          text: 'El número de documento debe tener entre 8 y 10 dígitos numéricos',
+          timer: 3000,
+          showConfirmButton: true
+        });
+        return;
+
+      }
+
       if (form.id) {
         await API.put(`/actualizarEstudiante/${form.id}`, data);
         Swal.fire({ icon: 'success', title: 'Estudiante actualizado', timer: 2000, showConfirmButton: false });
@@ -149,6 +161,7 @@ export default function GestionEstudiantil() {
         await API.post('/crearEstudiante', data);
         Swal.fire({ icon: 'success', title: 'Estudiante registrado', timer: 2000, showConfirmButton: false });
       }
+
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Ocurrió un error al guardar.", "error");
