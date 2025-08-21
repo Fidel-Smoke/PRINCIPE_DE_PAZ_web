@@ -13,15 +13,16 @@ export default function GestionEstudiantil() {
   const mesActual = new Date().toLocaleString('es-CO', { month: 'long' });
   const mesActualCapitalizado = mesActual.charAt(0).toUpperCase() + mesActual.slice(1).toLowerCase();
   const estudiantesFiltrados = estudiantes.filter(est => {
-    if (!busqueda.trim()) return true; 
+    const search = busqueda.toLowerCase().trim();
+
     const nombre = String(est.nombre_estudiante || "").toLowerCase();
     const documento = String(est.documento_estudiante || "").toLowerCase();
     const curso = String(est.curso || "").toLowerCase();
 
     return (
-      nombre.includes(busqueda.toLowerCase()) ||
-      documento.includes(busqueda.toLowerCase()) ||
-      curso.includes(busqueda.toLowerCase())
+      nombre.includes(search) ||
+      documento.includes(search) ||
+      curso.includes(search)
     );
   });
 
@@ -88,11 +89,11 @@ export default function GestionEstudiantil() {
       grado = 'TR';
     } else if (/^\d+$/.test(cursoRaw)) {
       if (cursoRaw.length === 3) {
-        grado = cursoRaw.charAt(0);        
+        grado = cursoRaw.charAt(0);
       } else if (cursoRaw.length === 4) {
-        grado = cursoRaw.substring(0, 2); 
+        grado = cursoRaw.substring(0, 2);
       } else {
-        grado = cursoRaw;                 
+        grado = cursoRaw;
       }
     }
 
@@ -222,7 +223,7 @@ export default function GestionEstudiantil() {
       descuento_pension: 0, incluye_carne: true, incluye_agenda: true, incluye_seguro: true
     });
     await cargarEstudiantes();
-    setPaginaActual(totalPaginas + 1); 
+    setPaginaActual(totalPaginas + 1);
     if (listaRef.current) {
       listaRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
