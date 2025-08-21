@@ -544,7 +544,46 @@ export default function GestionEstudiantil() {
 
         <div ref={listaRef} className="mt-5 pt-5">
           <h2 className="text-center mb-4 text-white display-5 fw-bold">🎓 Estudiantes Registrados</h2>
+          {totalPaginas > 1 && (
+            <nav className="d-flex justify-content-center mt-5">
+              <ul className="pagination custom-pagination shadow-sm">
 
+                <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
+                  <button
+                    className="page-buttons mx-3"
+                    onClick={() => setPaginaActual(paginaActual - 1)}
+                    aria-label="Anterior"
+                  >
+                    «
+                  </button>
+                </li>
+
+                {[...Array(totalPaginas)].map((_, i) => (
+                  <li
+                    key={i}
+                    className={`page-item ${paginaActual === i + 1 ? 'active' : ''}`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => setPaginaActual(i + 1)}
+                    >
+                      {i + 1}
+                    </button>
+                  </li>
+                ))}
+
+                <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                  <button
+                    className="page-buttons mx-2"
+                    onClick={() => setPaginaActual(paginaActual + 1)}
+                    aria-label="Siguiente"
+                  >
+                    »
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          )}
           {estudiantesFiltrados.length === 0 ? (
             <div className="alert alert-warning text-center">No hay resultados para esa búsqueda.</div>
           ) : (
@@ -578,7 +617,7 @@ export default function GestionEstudiantil() {
               const percentPaid = valorEsperado > 0 ? Math.round((total / valorEsperado) * 100) : 0;
 
               return (
-                <div key={est.id} className={`card mb-4 mt-5 student-card border-${deuda > 0 ? 'danger' : 'success'}`}>
+                <div key={est.id} className={`card mb-4 mt-3 student-card border-${deuda > 0 ? 'danger' : 'success'}`}>
                   <div className="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
                     <div>
                       <h5 className="mb-0">{est.nombre_estudiante} <small className="badge bg-light text-dark ms-2">{est.curso || '-'}</small></h5>
@@ -753,46 +792,7 @@ export default function GestionEstudiantil() {
             })
           )}
 
-          {totalPaginas > 1 && (
-            <nav className="d-flex justify-content-center mt-4">
-              <ul className="pagination custom-pagination shadow-sm">
 
-                <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
-                  <button
-                    className="page-link"
-                    onClick={() => setPaginaActual(paginaActual - 1)}
-                    aria-label="Anterior"
-                  >
-                    «
-                  </button>
-                </li>
-
-                {[...Array(totalPaginas)].map((_, i) => (
-                  <li
-                    key={i}
-                    className={`page-item ${paginaActual === i + 1 ? 'active' : ''}`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => setPaginaActual(i + 1)}
-                    >
-                      {i + 1}
-                    </button>
-                  </li>
-                ))}
-
-                <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
-                  <button
-                    className="page-link"
-                    onClick={() => setPaginaActual(paginaActual + 1)}
-                    aria-label="Siguiente"
-                  >
-                    »
-                  </button>
-                </li>
-              </ul>
-            </nav>
-          )}
         </div>
       </div>
     </div>
