@@ -8,11 +8,29 @@ import Swal from 'sweetalert2';
 export default function GestionEstudiantil() {
   const [estudiantes, setEstudiantes] = useState([]);
   const [busqueda, setBusqueda] = useState('');
-  const estudiantesFiltrados = estudiantes.filter(est =>
-    (est.nombre_estudiante || '').toLowerCase().includes(busqueda.toLowerCase()) ||
-    String(est.documento_estudiante || '').toLowerCase().includes(busqueda.toLowerCase()) ||
-    (est.curso || '').toLowerCase().includes(busqueda.toLowerCase())
-  );
+  const [paginaActual, setPaginaActual] = useState(1);
+  const estudiantesPorPagina = 5;
+  const mesActual = new Date().toLocaleString('es-CO', { month: 'long' });
+  const mesActualCapitalizado = mesActual.charAt(0).toUpperCase() + mesActual.slice(1).toLowerCase();
+  const estudiantesFiltrados = estudiantes.filter(est => {
+    if (!busqueda.trim()) return true; 
+    const nombre = String(est.nombre_estudiante || "").toLowerCase();
+    const documento = String(est.documento_estudiante || "").toLowerCase();
+    const curso = String(est.curso || "").toLowerCase();
+
+    return (
+      nombre.includes(busqueda.toLowerCase()) ||
+      documento.includes(busqueda.toLowerCase()) ||
+      curso.includes(busqueda.toLowerCase())
+    );
+  });
+
+
+  const indiceUltimo = paginaActual * estudiantesPorPagina;
+  const indicePrimero = indiceUltimo - estudiantesPorPagina;
+  const estudiantesPagina = estudiantesFiltrados.slice(indicePrimero, indiceUltimo);
+
+  const totalPaginas = Math.ceil(estudiantesFiltrados.length / estudiantesPorPagina);
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [form, setForm] = useState({
@@ -27,6 +45,7 @@ export default function GestionEstudiantil() {
     meses_pagados: [],
     es_docente: false,
     descuento_pension: 0,
+    descuento_pesos: 0,
     incluye_carne: true,
     incluye_agenda: true,
     incluye_seguro: true
@@ -59,10 +78,32 @@ export default function GestionEstudiantil() {
     'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'
   ];
 
+  function obtenerGrado(cursoRaw) {
+    let grado = 'TR';
+    if (!cursoRaw) return grado;
+
+    cursoRaw = cursoRaw.trim().toUpperCase();
+
+    if (cursoRaw === 'TR') {
+      grado = 'TR';
+    } else if (/^\d+$/.test(cursoRaw)) {
+      if (cursoRaw.length === 3) {
+        grado = cursoRaw.charAt(0);        
+      } else if (cursoRaw.length === 4) {
+        grado = cursoRaw.substring(0, 2); 
+      } else {
+        grado = cursoRaw;                 
+      }
+    }
+
+    return grado;
+  }
+
   const cargarEstudiantes = async () => {
     try {
       const res = await API.get('/traerEstudiante');
-      setEstudiantes(res.data || []);
+      const ordenados = (res.data || []).sort((a, b) => a.id - b.id);
+      setEstudiantes(ordenados);
     } catch (err) {
       console.error(err);
       setEstudiantes([]);
@@ -96,18 +137,19 @@ export default function GestionEstudiantil() {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    const cursoRaw = (form.curso || '').trim().toUpperCase();
-    let grado = 'TR';
-    const match = cursoRaw.match(/^\d{1,2}/);
-    if (match) {
-      grado = match[0];
-    } else if (cursoRaw === 'TR') {
-      grado = 'TR';
-    }
+    const grado = obtenerGrado(form.curso);
     const costosBase = COSTOS_2025[grado] || { matricula: 0, pension: 0 };
 
     let pensionFinal = form.es_docente ? costosBase.pension / 2 : costosBase.pension;
-    pensionFinal -= pensionFinal * (parseFloat(form.descuento_pension || 0) / 100);
+
+    if (form.descuento_pesos && Number(form.descuento_pesos) > 0) {
+      pensionFinal -= Number(form.descuento_pesos);
+    } else {
+      pensionFinal -= pensionFinal * (parseFloat(form.descuento_pension || 0) / 100);
+    }
+
+    if (pensionFinal < 0) pensionFinal = 0;
+
 
     const valor_carne = form.incluye_carne ? CARNET : 0;
     const valor_agenda = form.incluye_agenda ? AGENDA : 0;
@@ -127,7 +169,8 @@ export default function GestionEstudiantil() {
       valor_agenda,
       valor_seguro,
       valor_esperado: valorEsperado,
-      valor_pagado: totalPagado
+      valor_pagado: totalPagado,
+      descuento_pesos: form.descuento_pesos || 0
     };
 
     const repetido = estudiantes.find(est => String(est.documento_estudiante).trim() === String(form.documento_estudiante).trim() && est.id !== form.id);
@@ -179,6 +222,7 @@ export default function GestionEstudiantil() {
       descuento_pension: 0, incluye_carne: true, incluye_agenda: true, incluye_seguro: true
     });
     await cargarEstudiantes();
+    setPaginaActual(totalPaginas + 1); 
     if (listaRef.current) {
       listaRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -383,29 +427,43 @@ export default function GestionEstudiantil() {
                   onChange={handleChange}
                 />
 
-                {form.curso && parseFloat(form.descuento_pension) > 0 && (() => {
-                  const cursoRaw = (form.curso || '').trim().toUpperCase();
-                  let grado = 'TR';
-                  const match = cursoRaw.match(/^\d{1,2}/);
-                  if (match) {
-                    grado = match[0];
-                  } else if (cursoRaw === 'TR') {
-                    grado = 'TR';
-                  }
+                <label className="form-label mb-1 mt-2">Descuento pensión (valor fijo $)</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={form.descuento_pesos}
+                  name="descuento_pesos"
+                  onChange={handleChange}
+                />
+
+                {form.curso && (() => {
+                  const grado = obtenerGrado(form.curso);
                   const costosBase = COSTOS_2025[grado] || { pension: 0 };
 
-                  const descuentoDecimal = parseFloat(form.descuento_pension) / 100;
-                  const descuentoPesos = costosBase.pension * descuentoDecimal;
-                  const pensionFinal = costosBase.pension - descuentoPesos;
+                  let descuentoPesos = 0;
+                  let pensionFinal = costosBase.pension;
 
-                  const colorDescuento = parseFloat(form.descuento_pension) > 50 ? "text-danger" : "text-muted";
-                  const colorFinal = parseFloat(form.descuento_pension) > 50 ? "text-danger fw-bold" : "text-success";
+                  if (form.descuento_pesos && Number(form.descuento_pesos) > 0) {
+                    descuentoPesos = Number(form.descuento_pesos);
+                    pensionFinal -= descuentoPesos;
+                  } else if (parseFloat(form.descuento_pension) > 0) {
+                    const descuentoDecimal = parseFloat(form.descuento_pension) / 100;
+                    descuentoPesos = costosBase.pension * descuentoDecimal;
+                    pensionFinal -= descuentoPesos;
+                  }
+
+                  if (pensionFinal < 0) pensionFinal = 0;
+
+                  const colorDescuento = descuentoPesos > costosBase.pension * 0.5 ? "text-danger" : "text-muted";
+                  const colorFinal = descuentoPesos > costosBase.pension * 0.5 ? "text-danger fw-bold" : "text-success";
 
                   return (
                     <div className="mt-1">
-                      <small className={`${colorDescuento} d-block`}>
-                        💰 Se descontarán: ${descuentoPesos.toLocaleString('es-CO')}
-                      </small>
+                      {descuentoPesos > 0 && (
+                        <small className={`${colorDescuento} d-block`}>
+                          💰 Se descontarán: ${descuentoPesos.toLocaleString('es-CO')}
+                        </small>
+                      )}
                       <small className={`${colorFinal} d-block`}>
                         📉 Pensión final: ${pensionFinal.toLocaleString('es-CO')}
                       </small>
@@ -413,6 +471,7 @@ export default function GestionEstudiantil() {
                   );
                 })()}
               </div>
+
 
               <div className="col-12 col-md-8 d-flex align-items-center gap-3 flex-wrap">
                 <label className="form-check mb-0">
@@ -488,7 +547,7 @@ export default function GestionEstudiantil() {
           {estudiantesFiltrados.length === 0 ? (
             <div className="alert alert-warning text-center">No hay resultados para esa búsqueda.</div>
           ) : (
-            estudiantesFiltrados.map(est => {
+            estudiantesPagina.map(est => {
               let meses = [];
               try { meses = JSON.parse(est.meses_pagados || '[]'); } catch { meses = []; }
               meses = meses.filter(m => typeof m === 'string' && m.trim() !== '');
@@ -545,10 +604,28 @@ export default function GestionEstudiantil() {
                             <div className="metric-card p-2 text-center">
                               <small className="d-block">Pensión</small>
                               <strong>${Number(valorPension).toLocaleString('es-CO')}</strong>
+
                               {parseFloat(est.descuento_pension) > 0 && (
-                                <div><span className="badge bg-info mt-1">Descuento {parseFloat(est.descuento_pension)}%</span></div>
+                                <div>
+                                  <span className="badge bg-info mt-1">
+                                    Descuento {parseFloat(est.descuento_pension)}%
+                                  </span>
+                                </div>
                               )}
-                              {isDocente && <span className="badge bg-info text-white">👨‍🏫 Hijo De Trabajador</span>}
+
+                              {Number(est.descuento_pesos || 0) > 0 && (
+                                <div>
+                                  <span className="badge bg-info mt-1">
+                                    -${Number(est.descuento_pesos).toLocaleString('es-CO')} aplicado
+                                  </span>
+                                </div>
+                              )}
+
+                              {isDocente && (
+                                <span className="badge bg-info text-white mt-1">
+                                  👨‍🏫 Hijo De Trabajador
+                                </span>
+                              )}
                             </div>
                           </div>
                           <div className="col">
@@ -572,9 +649,27 @@ export default function GestionEstudiantil() {
                           <div className="col">
                             <div className="metric-card p-2 text-center">
                               <small className="d-block">Meses pagados</small>
-                              {meses.length > 0 ? meses.map((m, i) => <span key={i} className="badge bg-secondary me-1 mb-1">{m}</span>) : '-'}
+                              {(() => {
+                                if (meses.includes(mesActualCapitalizado)) {
+                                  return (
+                                    <>
+                                      {meses.map((m, i) => (
+                                        <span key={i} className="badge bg-secondary me-1 mb-1">{m}</span>
+                                      ))}
+                                      <span className="badge bg-success ms-1">✅ Al Dia Con El Mes Actual</span>
+                                    </>
+                                  );
+                                }
+
+                                return meses.length > 0
+                                  ? meses.map((m, i) => (
+                                    <span key={i} className="badge bg-secondary me-1 mb-1">{m}</span>
+                                  ))
+                                  : '-';
+                              })()}
                             </div>
                           </div>
+
                         </div>
 
                         <div className="mb-3">
@@ -655,6 +750,47 @@ export default function GestionEstudiantil() {
                 </div>
               );
             })
+          )}
+
+          {totalPaginas > 1 && (
+            <nav className="d-flex justify-content-center mt-4">
+              <ul className="pagination custom-pagination shadow-sm">
+
+                <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => setPaginaActual(paginaActual - 1)}
+                    aria-label="Anterior"
+                  >
+                    «
+                  </button>
+                </li>
+
+                {[...Array(totalPaginas)].map((_, i) => (
+                  <li
+                    key={i}
+                    className={`page-item ${paginaActual === i + 1 ? 'active' : ''}`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => setPaginaActual(i + 1)}
+                    >
+                      {i + 1}
+                    </button>
+                  </li>
+                ))}
+
+                <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => setPaginaActual(paginaActual + 1)}
+                    aria-label="Siguiente"
+                  >
+                    »
+                  </button>
+                </li>
+              </ul>
+            </nav>
           )}
         </div>
       </div>
