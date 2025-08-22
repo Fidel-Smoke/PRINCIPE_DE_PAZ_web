@@ -19,10 +19,12 @@ export default function GestionEstudiantil() {
     const documento = String(est.documento_estudiante || "").toLowerCase();
     const docacudiente = String(est.documento_acudiente || "").toLowerCase();
     const curso = String(est.curso || "").toLowerCase();
+    const observaciones = String(est.observaciones || "").toLowerCase();
     return (
       nombre.includes(search) ||
       documento.includes(search) ||
       docacudiente.includes(search) ||
+      observaciones.includes(search) ||
       curso.includes(search)
     );
   });
