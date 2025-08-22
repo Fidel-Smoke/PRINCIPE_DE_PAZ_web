@@ -478,26 +478,32 @@ body::before {
 
 
 /* PAGINACIÓN MODERNA */
-.custom-pagination .page-link {
+.custom-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  max-width: 100%;
+  overflow-x: auto; /* permite scroll horizontal en móviles */
+}
+
+.custom-pagination .page-link,
+.custom-pagination .page-buttons {
   border: none;
-  margin: 0 4px;
   padding: 8px 16px;
   border-radius: 8px;
   background: #f8f9fa;
   color: #0d6efd;
   font-weight: 600;
   transition: all 0.3s ease;
+  min-width: 40px;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .custom-pagination .page-buttons {
-  border: none;
-  margin: 0 4px;
-  padding: 8px 16px;
-  border-radius: 8px;
   background: #17f0c1;
-  color: #0d6efd;
-  font-weight: 600;
-  transition: all 0.3s ease;
 }
 
 .custom-pagination .page-link:hover {
@@ -519,5 +525,6 @@ body::before {
   color: #aaa !important;
   cursor: not-allowed;
 }
+
 
 /* FIN PAGINACIÓN MODERNA */

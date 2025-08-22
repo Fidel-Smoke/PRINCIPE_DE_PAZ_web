@@ -546,11 +546,10 @@ export default function GestionEstudiantil() {
           <h2 className="text-center mb-4 text-white display-5 fw-bold">🎓 Estudiantes Registrados</h2>
           {totalPaginas > 1 && (
             <nav className="d-flex justify-content-center mt-5">
-              <ul className="pagination custom-pagination shadow-sm">
-
+              <ul className="pagination cuestom-pagination flex-wrap justify-content-center gap-2">
                 <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
                   <button
-                    className="page-buttons mx-3"
+                    className="page-link"
                     onClick={() => setPaginaActual(paginaActual - 1)}
                     aria-label="Anterior"
                   >
@@ -574,7 +573,7 @@ export default function GestionEstudiantil() {
 
                 <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
                   <button
-                    className="page-buttons mx-2"
+                    className="page-link"
                     onClick={() => setPaginaActual(paginaActual + 1)}
                     aria-label="Siguiente"
                   >
@@ -696,7 +695,10 @@ export default function GestionEstudiantil() {
                                       {meses.map((m, i) => (
                                         <span key={i} className="badge bg-secondary me-1 mb-1">{m}</span>
                                       ))}
-                                      <span className="badge bg-success ms-1">✅ Al Dia Con El Mes Actual</span>
+                                      <div class="badge bg-success text-wrap w-100 text-center">
+                                        ✅ Al Día Con El Mes Actual
+                                      </div>
+
                                     </>
                                   );
                                 }
