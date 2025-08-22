@@ -17,11 +17,12 @@ export default function GestionEstudiantil() {
 
     const nombre = String(est.nombre_estudiante || "").toLowerCase();
     const documento = String(est.documento_estudiante || "").toLowerCase();
+    const docacudiente = String(est.documento_acudiente || "").toLowerCase();
     const curso = String(est.curso || "").toLowerCase();
-
     return (
       nombre.includes(search) ||
       documento.includes(search) ||
+      docacudiente.includes(search) ||
       curso.includes(search)
     );
   });
@@ -30,7 +31,6 @@ export default function GestionEstudiantil() {
   const indiceUltimo = paginaActual * estudiantesPorPagina;
   const indicePrimero = indiceUltimo - estudiantesPorPagina;
   const estudiantesPagina = estudiantesFiltrados.slice(indicePrimero, indiceUltimo);
-
   const totalPaginas = Math.ceil(estudiantesFiltrados.length / estudiantesPorPagina);
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -545,43 +545,29 @@ export default function GestionEstudiantil() {
         <div ref={listaRef} className="mt-5 pt-5">
           <h2 className="text-center mb-4 text-white display-5 fw-bold">🎓 Estudiantes Registrados</h2>
           {totalPaginas > 1 && (
-            <nav className="d-flex justify-content-center mt-5">
-              <ul className="pagination cuestom-pagination flex-wrap justify-content-center gap-2">
-                <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
-                  <button
-                    className="page-link"
-                    onClick={() => setPaginaActual(paginaActual - 1)}
-                    aria-label="Anterior"
-                  >
-                    «
-                  </button>
-                </li>
+            <div className="d-flex justify-content-end align-items-center mt-5 gap-3">
+              <button
+                className="btn text-white btn-sm fs-4 fw-bold"
+                disabled={paginaActual === 1}
+                onClick={() => setPaginaActual(paginaActual - 1)}
+                aria-label="Anterior"
+              >
+                {"<"}
+              </button>
 
-                {[...Array(totalPaginas)].map((_, i) => (
-                  <li
-                    key={i}
-                    className={`page-item ${paginaActual === i + 1 ? 'active' : ''}`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => setPaginaActual(i + 1)}
-                    >
-                      {i + 1}
-                    </button>
-                  </li>
-                ))}
+              <span className="fw-bold text-white">
+                {indicePrimero + 1} – {Math.min(indiceUltimo, estudiantesFiltrados.length)} de {estudiantesFiltrados.length}
+              </span>
 
-                <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
-                  <button
-                    className="page-link"
-                    onClick={() => setPaginaActual(paginaActual + 1)}
-                    aria-label="Siguiente"
-                  >
-                    »
-                  </button>
-                </li>
-              </ul>
-            </nav>
+              <button
+                className="btn text-white btn-sm shadow-s fs-4 fw-bold"
+                disabled={paginaActual === totalPaginas}
+                onClick={() => setPaginaActual(paginaActual + 1)}
+                aria-label="Siguiente"
+              >
+                {">"}
+              </button>
+            </div>
           )}
           {estudiantesFiltrados.length === 0 ? (
             <div className="alert alert-warning text-center">No hay resultados para esa búsqueda.</div>
@@ -695,7 +681,7 @@ export default function GestionEstudiantil() {
                                       {meses.map((m, i) => (
                                         <span key={i} className="badge bg-secondary me-1 mb-1">{m}</span>
                                       ))}
-                                      <div class="badge bg-success text-wrap w-100 text-center">
+                                      <div className="badge bg-success text-wrap w-100 text-center">
                                         ✅ Al Día Con El Mes Actual
                                       </div>
 
