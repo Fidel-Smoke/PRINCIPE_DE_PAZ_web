@@ -315,16 +315,21 @@ export default function GestionEstudiantil() {
     estudiantes.forEach(est => {
       let meses = [];
       try { meses = JSON.parse(est.meses_pagados || '[]'); } catch { }
+
       const total = Number(est.valor_matricula || 0) + Number(est.valor_pension || 0) * meses.length +
         Number(est.valor_carne || 0) + Number(est.valor_agenda || 0) + Number(est.valor_seguro || 0);
       const deuda = Number(est.valor_esperado || 0) - total;
 
-      if (deuda <= 0) totalAlDia++;
-      else totalConDeuda++;
+      if (meses.includes(mesActualCapitalizado)) {
+        totalAlDia++;
+      } else {
+        totalConDeuda++;
+      }
 
       sumaPagada += total;
       sumaDeuda += deuda > 0 ? deuda : 0;
     });
+
 
     const resumen = [
       ["Reporte de Gestión Estudiantil", ""],
