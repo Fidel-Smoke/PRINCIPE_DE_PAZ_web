@@ -10,8 +10,6 @@ export default function Index() {
     const [loading, setLoading] = useState(true);
     const [flipped, setFlipped] = useState([false, false, false]);
     const [mostrarCalendario, setMostrarCalendario] = useState(false);
-    const [nivelSeleccionado, setNivelSeleccionado] = useState('');
-    const [cursoSeleccionado, setCursoSeleccionado] = useState('');
 
 
 
@@ -263,6 +261,7 @@ export default function Index() {
                                     loading="lazy"
                                     allowFullScreen
                                 ></iframe>
+                                <iframe src="https://player.kick.com/westcol" height="720" width="1280" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>
                             </div>
                         </div>
 
@@ -336,26 +335,6 @@ export default function Index() {
                                     <li><a href="#" className="text-muted text-decoration-none">Términos y Condiciones</a></li>
                                 </ul>
                             </div>
-                            {/* <div className="d-flex gap-3 ">
-                                <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer">
-                                    <img
-                                        src="./app.png"
-                                        alt="Descargar en App Store"
-                                        style={{ width: "140px", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", transition: "transform 0.2s, box-shadow 0.2s" }}
-                                        onMouseOver={e => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.18)"; }}
-                                        onMouseOut={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)"; }}
-                                    />
-                                </a>
-                                <a href="https://play.google.com/store" target="_blank" rel="noopener noreferrer">
-                                    <img
-                                        src="./play.png"
-                                        alt="Descargar en Google Play"
-                                        style={{ width: "140px", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", transition: "transform 0.2s, box-shadow 0.2s" }}
-                                        onMouseOver={e => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.18)"; }}
-                                        onMouseOut={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)"; }}
-                                    />
-                                </a>
-                            </div> */}
                         </div>
                         <div className="row mt-4">
                             <div className="col-md-8 text-muted small">
